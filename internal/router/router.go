@@ -5,9 +5,20 @@ import (
 	"server/internal/module/system/api"
 )
 
-func NewRouter(api *api.SystemApi) *gin.Engine {
+type Router struct {
+	systemApi *api.SystemApi
+	engine    *gin.Engine
+}
+
+func NewRouter(systemApi *api.SystemApi) *Router {
 
 	engine := gin.Default()
 
-	return engine
+	router := &Router{engine: engine, systemApi: systemApi}
+
+	return router
+}
+
+func (r *Router) Engine() *gin.Engine {
+	return r.engine
 }

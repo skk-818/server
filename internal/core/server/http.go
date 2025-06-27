@@ -13,12 +13,16 @@ type HTTPServer struct {
 	server *http.Server
 }
 
-func NewHTTPServer(engine *gin.Engine) *HTTPServer {
+type EngineProvider interface {
+	Engine() *gin.Engine
+}
+
+func NewHTTPServer(engine EngineProvider) *HTTPServer {
 	return &HTTPServer{
-		Engine: engine,
+		Engine: engine.Engine(),
 		server: &http.Server{
 			Addr:         ":8080",
-			Handler:      engine,
+			Handler:      engine.Engine(),
 			ReadTimeout:  10 * time.Second,
 			WriteTimeout: 10 * time.Second,
 		},

@@ -1,5 +1,11 @@
 package router
 
-import "github.com/google/wire"
+import (
+	"github.com/google/wire"
+	"server/internal/core/server"
+)
 
-var ProviderSet = wire.NewSet(NewRouter)
+var ProviderSet = wire.NewSet(
+	NewRouter,
+	wire.Bind(new(server.EngineProvider), new(*Router)),
+)
