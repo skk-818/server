@@ -10,7 +10,12 @@ mysql:
   port: 3306
   user: "root"
   password: "123456"
-  dbname: "demo"
+  dbname: "skk_server"
   charset: "utf8mb4"
   max_open_conns: 100
   max_idle_conns: 10
+
+server:
+  addr: "9999"
+  read_timeout: 10
+  write_timeout: 10

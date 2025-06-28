@@ -14,8 +14,10 @@ func NewRouter(systemApi *api.SystemApi) *Router {
 
 	engine := gin.Default()
 
-	router := &Router{engine: engine, systemApi: systemApi}
+	systemRouter := engine.Group("system")
+	systemApi.InitSystemApi(systemRouter)
 
+	router := &Router{engine: engine, systemApi: systemApi}
 	return router
 }
 

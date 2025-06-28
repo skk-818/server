@@ -1,10 +1,14 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/spf13/viper"
+)
 
 type Config struct {
-	Logger *Logger `mapstructure:"logger" json:"logger" yaml:"logger"`
-	MySQL  *Mysql  `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
+	Logger *Logger     `mapstructure:"logger" json:"logger" yaml:"logger"`
+	MySQL  *Mysql      `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
+	Server *HTTPServer `mapstructure:"server" json:"server" yaml:"server"`
 }
 
 const FilePath = "./etc/config.yaml" // 配置文件路径常量
@@ -33,6 +37,10 @@ func ProvideLoggerConfig(cfg *Config) *Logger {
 }
 
 // ProvideMysqlConfig 拆解 logger
-func ProvideMysqlConfig(cfg *Config) *MySQL {
+func ProvideMysqlConfig(cfg *Config) *Mysql {
 	return cfg.MySQL
+}
+
+func ProvideHttpServerConfig(cfg *Config) *HTTPServer {
+	return cfg.Server
 }

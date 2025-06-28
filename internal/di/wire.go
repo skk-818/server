@@ -9,6 +9,9 @@ import (
 	"server/internal/core"
 	"server/internal/core/server"
 	"server/internal/module/system/api"
+	"server/internal/module/system/repo"
+	"server/internal/module/system/service"
+	"server/internal/module/system/usecase"
 	"server/internal/router"
 )
 
@@ -17,6 +20,9 @@ func InitApp() (*server.HTTPServer, error) {
 		core.ProviderSet,
 		router.ProviderSet,
 		api.ProviderSet,
+		service.ProviderSet,
+		usecase.ProviderSet,
+		repo.ProviderSet,
 	)
 
 	return nil, nil

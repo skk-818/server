@@ -7,16 +7,41 @@
 package di
 
 import (
+	"server/internal/core/config"
+	"server/internal/core/logger"
+	"server/internal/core/mysql"
 	"server/internal/core/server"
 	"server/internal/module/system/api"
+	"server/internal/module/system/repo"
+	"server/internal/module/system/service"
+	"server/internal/module/system/usecase"
 	"server/internal/router"
 )
 
 // Injectors from wire.go:
 
 func InitApp() (*server.HTTPServer, error) {
-	systemApi := api.NewSystemApi()
-	engine := router.NewRouter(systemApi)
-	httpServer := server.NewHTTPServer(engine)
-	return httpServer, nil
+	configConfig, err := config.LoadConfig()
+	if err != nil {
+		return nil, err
+	}
+	configLogger := config.ProvideLoggerConfig(configConfig)
+	zapLogger, err := logger.NewZapLogger(configLogger)
+	if err != nil {
+		return nil, err
+	}
+	configMysql := config.ProvideMysqlConfig(configConfig)
+	db, err := mysql.NewMySQL(configMysql)
+	if err != nil {
+		return nil, err
+	}
+	userRepo := repo.NewUserRepo(db)
+	userUsecase := usecase.NewUserUsecase(zapLogger, userRepo)
+	userService := service.NewUserService(userUsecase)
+	userApi := api.NewUserApi(configConfig, userService)
+	systemApi := api.NewSystemApi(zapLogger, userApi)
+	routerRouter := router.NewRouter(systemApi)
+	httpServer := config.ProvideHttpServerConfig(configConfig)
+	serverHTTPServer := server.NewHTTPServer(zapLogger, routerRouter, httpServer)
+	return serverHTTPServer, nil
 }

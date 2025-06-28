@@ -98,7 +98,7 @@ func parseLevel(level string) zapcore.Level {
 	}
 }
 
-func getEncoder(cfg *config.Zap, forConsole bool) zapcore.Encoder {
+func getEncoder(cfg *config.Logger, forConsole bool) zapcore.Encoder {
 	encCfg := zap.NewProductionEncoderConfig()
 	encCfg.EncodeTime = zapcore.ISO8601TimeEncoder
 	encCfg.EncodeLevel = zapcore.CapitalLevelEncoder

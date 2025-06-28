@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"server/internal/core/logger"
-	"server/internal/repo"
+	"server/internal/module/system/usecase/repo"
 )
 
 type UserUsecase struct {
