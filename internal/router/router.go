@@ -2,20 +2,33 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"server/internal/module/system/api"
+	"server/internal/core/config"
+	"server/internal/middleware"
+	commonApi "server/internal/module/common/api"
+	systemApi "server/internal/module/system/api"
 )
 
 type Router struct {
-	systemApi *api.SystemApi
 	engine    *gin.Engine
+	cfg       *config.HTTPServer
+	cors      *middleware.CorsMiddleware
+	systemApi *systemApi.SystemApi
+	commonApi *commonApi.CommonApi
 }
 
-func NewRouter(systemApi *api.SystemApi) *Router {
+func NewRouter(cfg *config.HTTPServer, cors *middleware.CorsMiddleware, systemApi *systemApi.SystemApi, commonApi *commonApi.CommonApi) *Router {
 
 	engine := gin.Default()
 
-	systemRouter := engine.Group("system")
+	if cfg.Cors.Enabled {
+		engine.Use(cors.CorsMiddleware())
+	}
+
+	systemRouter := engine.Group("api/system")
 	systemApi.InitSystemApi(systemRouter)
+
+	commonRouter := engine.Group("api/common")
+	commonApi.InitCommonApi(commonRouter)
 
 	router := &Router{engine: engine, systemApi: systemApi}
 	return router

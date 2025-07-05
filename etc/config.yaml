@@ -15,7 +15,13 @@ mysql:
   max_open_conns: 100
   max_idle_conns: 10
 
-server:
+http:
   addr: "9999"
   read_timeout: 10
   write_timeout: 10
+  cors:
+    enabled: true
+    allow_origins:
+      - "http://localhost:3006"
+      - "https://*.example.com"
+      - "http://192.168.*.*"

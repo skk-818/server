@@ -15,6 +15,7 @@ var ProviderSet = wire.NewSet(
 	config.ProvideMysqlConfig,
 	config.ProvideLoggerConfig,
 	config.ProvideHttpServerConfig,
+	config.ProviderCorsConfig,
 
 	mysql.NewMySQL,
 

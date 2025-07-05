@@ -8,7 +8,7 @@ import (
 type Config struct {
 	Logger *Logger     `mapstructure:"logger" json:"logger" yaml:"logger"`
 	MySQL  *Mysql      `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
-	Server *HTTPServer `mapstructure:"server" json:"server" yaml:"server"`
+	Http   *HTTPServer `mapstructure:"http" json:"http" yaml:"http"`
 }
 
 const FilePath = "./etc/config.yaml" // 配置文件路径常量
@@ -42,5 +42,9 @@ func ProvideMysqlConfig(cfg *Config) *Mysql {
 }
 
 func ProvideHttpServerConfig(cfg *Config) *HTTPServer {
-	return cfg.Server
+	return cfg.Http
+}
+
+func ProviderCorsConfig(cfg *Config) *Cors {
+	return cfg.Http.Cors
 }

@@ -11,6 +11,8 @@ import (
 	"server/internal/core/logger"
 	"server/internal/core/mysql"
 	"server/internal/core/server"
+	"server/internal/middleware"
+	api2 "server/internal/module/common/api"
 	"server/internal/module/system/api"
 	"server/internal/module/system/repo"
 	"server/internal/module/system/service"
@@ -30,6 +32,9 @@ func InitApp() (*server.HTTPServer, error) {
 	if err != nil {
 		return nil, err
 	}
+	httpServer := config.ProvideHttpServerConfig(configConfig)
+	cors := config.ProviderCorsConfig(configConfig)
+	corsMiddleware := middleware.NewCorsMiddleware(cors)
 	configMysql := config.ProvideMysqlConfig(configConfig)
 	db, err := mysql.NewMySQL(configMysql)
 	if err != nil {
@@ -40,8 +45,9 @@ func InitApp() (*server.HTTPServer, error) {
 	userService := service.NewUserService(userUsecase)
 	userApi := api.NewUserApi(configConfig, userService)
 	systemApi := api.NewSystemApi(zapLogger, userApi)
-	routerRouter := router.NewRouter(systemApi)
-	httpServer := config.ProvideHttpServerConfig(configConfig)
+	authApi := api2.NewAuthApi()
+	commonApi := api2.NewCommonApi(authApi)
+	routerRouter := router.NewRouter(httpServer, corsMiddleware, systemApi, commonApi)
 	serverHTTPServer := server.NewHTTPServer(zapLogger, routerRouter, httpServer)
 	return serverHTTPServer, nil
 }
