@@ -30,7 +30,7 @@ func SuccessWithData[T any](c *gin.Context, data T) {
 	})
 }
 
-func Error(c *gin.Context, err error) {
+func Fail(c *gin.Context, err error) {
 	if bizErr, ok := err.(*xerror.BizError); ok {
 		c.JSON(http.StatusOK, Response[any]{
 			Code:    bizErr.Code,

@@ -15,6 +15,11 @@ mysql:
   max_open_conns: 100
   max_idle_conns: 10
 
+jwt:
+  secret: "112233"
+  accessExpire: 3600          # Access Token 过期时间，单位秒
+  refreshExpire: 604800       # Refresh Token 过期时间，单位秒
+
 http:
   addr: "9999"
   read_timeout: 10

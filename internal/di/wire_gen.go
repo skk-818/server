@@ -12,7 +12,6 @@ import (
 	"server/internal/core/mysql"
 	"server/internal/core/server"
 	"server/internal/middleware"
-	api2 "server/internal/module/common/api"
 	"server/internal/module/system/api"
 	"server/internal/module/system/repo"
 	"server/internal/module/system/service"
@@ -35,6 +34,9 @@ func InitApp() (*server.HTTPServer, error) {
 	httpServer := config.ProvideHttpServerConfig(configConfig)
 	cors := config.ProviderCorsConfig(configConfig)
 	corsMiddleware := middleware.NewCorsMiddleware(cors)
+	jwt := config.ProvideJwtConfig(configConfig)
+	jwtUsecase := usecase.NewJwtUsecase(jwt)
+	jwtMiddleware := middleware.NewJwtMiddleware(jwtUsecase)
 	configMysql := config.ProvideMysqlConfig(configConfig)
 	db, err := mysql.NewMySQL(configMysql)
 	if err != nil {
@@ -44,11 +46,9 @@ func InitApp() (*server.HTTPServer, error) {
 	userUsecase := usecase.NewUserUsecase(zapLogger, userRepo)
 	userService := service.NewUserService(userUsecase)
 	userApi := api.NewUserApi(configConfig, userService)
-	systemApi := api.NewSystemApi(zapLogger, userApi)
-	authApi := api2.NewAuthApi()
-	apiUserApi := api2.NewUserApi()
-	commonApi := api2.NewCommonApi(authApi, apiUserApi)
-	routerRouter := router.NewRouter(httpServer, corsMiddleware, systemApi, commonApi)
+	authApi := api.NewAuthApi()
+	systemApi := api.NewSystemApi(zapLogger, jwtMiddleware, userApi, authApi)
+	routerRouter := router.NewRouter(httpServer, corsMiddleware, systemApi)
 	serverHTTPServer := server.NewHTTPServer(zapLogger, routerRouter, httpServer)
 	return serverHTTPServer, nil
 }

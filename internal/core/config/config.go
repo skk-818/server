@@ -9,6 +9,7 @@ type Config struct {
 	Logger *Logger     `mapstructure:"logger" json:"logger" yaml:"logger"`
 	MySQL  *Mysql      `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
 	Http   *HTTPServer `mapstructure:"http" json:"http" yaml:"http"`
+	Jwt    *Jwt        `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
 }
 
 const FilePath = "./etc/config.yaml" // 配置文件路径常量
@@ -31,12 +32,10 @@ func LoadConfig() (*Config, error) {
 	return &cfg, nil
 }
 
-// ProvideLoggerConfig 拆解 logger
 func ProvideLoggerConfig(cfg *Config) *Logger {
 	return cfg.Logger
 }
 
-// ProvideMysqlConfig 拆解 logger
 func ProvideMysqlConfig(cfg *Config) *Mysql {
 	return cfg.MySQL
 }
@@ -47,4 +46,8 @@ func ProvideHttpServerConfig(cfg *Config) *HTTPServer {
 
 func ProviderCorsConfig(cfg *Config) *Cors {
 	return cfg.Http.Cors
+}
+
+func ProvideJwtConfig(cfg *Config) *Jwt {
+	return cfg.Jwt
 }

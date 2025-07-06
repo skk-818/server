@@ -28,14 +28,14 @@ func (jm *JwtMiddleware) Handler() gin.HandlerFunc {
 		// 从 Header 获取 Authorization: Bearer <token>
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			response.Error(c, xerror.ErrAuthHeaderMissing)
+			response.Fail(c, xerror.ErrAuthHeaderMissing)
 			c.Abort()
 			return
 		}
 
 		parts := strings.SplitN(authHeader, " ", 2)
 		if !(len(parts) == 2 && strings.EqualFold(parts[0], "Bearer")) {
-			response.Error(c, xerror.ErrAuthHeaderFormat)
+			response.Fail(c, xerror.ErrAuthHeaderFormat)
 			c.Abort()
 			return
 		}
@@ -43,7 +43,7 @@ func (jm *JwtMiddleware) Handler() gin.HandlerFunc {
 		// 解析 JWT
 		claims, err := jm.Parse(parts[1])
 		if err != nil {
-			response.Error(c, xerror.ErrInvalidToken)
+			response.Fail(c, xerror.ErrInvalidToken)
 			c.Abort()
 			return
 		}
