@@ -16,12 +16,11 @@ type Router struct {
 	commonApi *commonApi.CommonApi
 }
 
-func NewRouter(cfg *config.HTTPServer, cors *middleware.CorsMiddleware, systemApi *systemApi.SystemApi, commonApi *commonApi.CommonApi) *Router {
-
+func NewRouter(cfg *config.HTTPServer, corsMiddleware *middleware.CorsMiddleware, systemApi *systemApi.SystemApi, commonApi *commonApi.CommonApi) *Router {
 	engine := gin.Default()
 
 	if cfg.Cors.Enabled {
-		engine.Use(cors.CorsMiddleware())
+		engine.Use(corsMiddleware.Handler())
 	}
 
 	systemRouter := engine.Group("api/system")

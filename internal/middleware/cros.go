@@ -19,7 +19,7 @@ func NewCorsMiddleware(cfg *config.Cors) *CorsMiddleware {
 	return &CorsMiddleware{options: &corsOptions{allowOrigins: cfg.AllowOrigins}}
 }
 
-func (cm *CorsMiddleware) CorsMiddleware() gin.HandlerFunc {
+func (cm *CorsMiddleware) Handler() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		origin := c.GetHeader("Origin")

@@ -1,0 +1,43 @@
+package xerror
+
+type BizError struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+func (e *BizError) Error() string {
+	return e.Message
+}
+
+func New(code int, msg string) *BizError {
+	return &BizError{
+		Code:    code,
+		Message: msg,
+	}
+}
+
+// ========== 通用模块：10 开头 ==========
+var (
+	ErrSuccess               = New(0, "success")
+	ErrInvalidParam          = New(100001, "参数错误")
+	ErrUnauthorized          = New(100002, "未授权")
+	ErrInternalServer        = New(100003, "服务器内部错误")
+	ErrNotFound              = New(100004, "资源不存在")
+	ErrPermissionDeny        = New(100005, "无权限访问")
+	ErrAuthHeaderMissing     = New(100006, "未提供 Authorization header")
+	ErrAuthHeaderFormat      = New(100007, "Authorization 格式错误")
+	ErrInvalidToken          = New(100008, "token 无效")
+	ErrTokenExpired          = New(100009, "token 已过期")
+	ErrTokenInvalid          = New(100010, "token 无效")
+	ErrTokenMalformed        = New(100011, "token 格式错误")
+	ErrTokenNotValidYet      = New(100012, "token 尚未生效")
+	ErrTokenSignatureInvalid = New(100013, "token 签名无效")
+	ErrTokenParseFailed      = New(100014, "token 解析失败")
+)
+
+// ========== 用户模块：20 开头 ==========
+var (
+	ErrUserNotFound  = New(200001, "用户不存在")
+	ErrUserConflict  = New(200002, "用户已存在")
+	ErrUserLoginFail = New(200003, "用户名或密码错误")
+)

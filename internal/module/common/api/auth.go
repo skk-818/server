@@ -1,6 +1,9 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"server/pkg/response"
+)
 
 type AuthApi struct{}
 
@@ -12,6 +15,6 @@ func (a *AuthApi) InitAuthApi(router *gin.RouterGroup) {
 	router.POST("login", a.Login)
 }
 
-func (a *AuthApi) Login(ctx *gin.Context) {
-
+func (a *AuthApi) Login(c *gin.Context) {
+	response.Success(c)
 }

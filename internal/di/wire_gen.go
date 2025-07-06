@@ -46,7 +46,8 @@ func InitApp() (*server.HTTPServer, error) {
 	userApi := api.NewUserApi(configConfig, userService)
 	systemApi := api.NewSystemApi(zapLogger, userApi)
 	authApi := api2.NewAuthApi()
-	commonApi := api2.NewCommonApi(authApi)
+	apiUserApi := api2.NewUserApi()
+	commonApi := api2.NewCommonApi(authApi, apiUserApi)
 	routerRouter := router.NewRouter(httpServer, corsMiddleware, systemApi, commonApi)
 	serverHTTPServer := server.NewHTTPServer(zapLogger, routerRouter, httpServer)
 	return serverHTTPServer, nil

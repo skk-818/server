@@ -18,8 +18,5 @@ func NewSystemApi(logger logger.Logger, userApi *UserApi) *SystemApi {
 }
 
 func (r *SystemApi) InitSystemApi(router *gin.RouterGroup) {
-	router.GET("/ping", func(c *gin.Context) {
-		r.logger.Info("ping requested")
-		c.JSON(200, gin.H{"message": "pong"})
-	})
+
 }
