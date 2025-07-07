@@ -23,5 +23,5 @@ func (ua *UserApi) InitUserApi(router *gin.RouterGroup) {
 }
 
 func (ua *UserApi) Info(c *gin.Context) {
-	response.SuccessWithData(c, gin.H{"name": ""})
+	response.SuccessWithData(c, gin.H{"name": "", "roles": []string{"R_ADMIN"}, "introduction": "", "avatar": "", "email": ""})
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"gorm.io/gorm/schema"
 	"server/internal/module/system/model"
 	"server/internal/module/system/usecase/repo"
 )
@@ -14,6 +15,15 @@ type initRepo struct {
 
 func NewInitRepo(db *gorm.DB) repo.InitRepo {
 	return &initRepo{db: db}
+}
+
+func (r *initRepo) AutoMigrate(tables []schema.Tabler) error {
+	for _, table := range tables {
+		if err := r.db.AutoMigrate(table); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (r *initRepo) IsInitialized(name string) (bool, error) {

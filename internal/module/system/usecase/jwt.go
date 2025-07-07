@@ -22,7 +22,7 @@ func (ju *JwtUsecase) Parse(string string) (*jwt.CustomClaims, error) {
 	return j.ParseToken(string)
 }
 
-func (ju *JwtUsecase) GenerateAccessToken(userID uint, username, role string) (string, error) {
+func (ju *JwtUsecase) GenerateAccessToken(userID uint, username string, roles []string) (string, error) {
 	j := jwt.New(ju.cfg.Secret, ju.cfg.AccessExpire, ju.cfg.RefreshExpire)
-	return j.GenerateAccessToken(userID, username, role)
+	return j.GenerateAccessToken(userID, username, roles)
 }

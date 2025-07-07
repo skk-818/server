@@ -21,19 +21,19 @@ func New(secret string, accessExpire, refreshExpire int64) *Jwt {
 	}
 }
 
-func (j *Jwt) GenerateAccessToken(userID uint, username, role string) (string, error) {
-	return j.GenerateToken(userID, username, role, time.Duration(j.accessTokenExpire)*time.Second)
+func (j *Jwt) GenerateAccessToken(userID uint, username string, roles []string) (string, error) {
+	return j.GenerateToken(userID, username, roles, time.Duration(j.accessTokenExpire)*time.Second)
 }
 
-func (j *Jwt) GenerateRefreshToken(userID uint, username, role string) (string, error) {
-	return j.GenerateToken(userID, username, role, time.Duration(j.refreshTokenExpire)*time.Second)
+func (j *Jwt) GenerateRefreshToken(userID uint, username string, roles []string) (string, error) {
+	return j.GenerateToken(userID, username, roles, time.Duration(j.refreshTokenExpire)*time.Second)
 }
 
-func (j *Jwt) GenerateToken(userID uint, username, role string, expire time.Duration) (string, error) {
+func (j *Jwt) GenerateToken(userID uint, username string, roles []string, expire time.Duration) (string, error) {
 	claims := CustomClaims{
 		UserID:   userID,
 		Username: username,
-		Role:     role,
+		Roles:    roles,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expire)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

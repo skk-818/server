@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"go.uber.org/zap"
+	"gorm.io/gorm/schema"
 	"server/internal/core/logger"
 	"server/internal/module/system/model"
 	"server/internal/module/system/usecase/repo"
@@ -33,6 +34,16 @@ func NewInitUsecase(
 }
 
 func (u *InitUsecase) InitIfNeeded() error {
+
+	if err := u.initRepo.AutoMigrate([]schema.Tabler{
+		&model.Init{},
+		&model.Role{},
+		&model.User{},
+	}); err != nil {
+		u.logger.Error("初始化数据库表结构失败", zap.Any("err", err))
+		return err
+	}
+
 	if !u.RoleIsInitialized() {
 		if err := u.RoleInitialize(); err != nil {
 			u.logger.Error("初始化角色失败", zap.Any("err", err))
