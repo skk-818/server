@@ -42,13 +42,22 @@ func InitApp() (*server.HTTPServer, error) {
 	if err != nil {
 		return nil, err
 	}
+	casbinRepo := repo.NewCasbinRepo(db)
+	casbinUsecase, err := usecase.NewCasbinUsecase(zapLogger, casbinRepo)
+	if err != nil {
+		return nil, err
+	}
+	casbinMiddleware := middleware.NewCasbinMiddleware(casbinUsecase)
 	userRepo := repo.NewUserRepo(db)
 	userUsecase := usecase.NewUserUsecase(zapLogger, userRepo)
 	userService := service.NewUserService(userUsecase)
 	userApi := api.NewUserApi(configConfig, userService)
 	authApi := api.NewAuthApi()
-	systemApi := api.NewSystemApi(zapLogger, jwtMiddleware, userApi, authApi)
+	systemApi := api.NewSystemApi(jwtMiddleware, casbinMiddleware, userApi, authApi)
 	routerRouter := router.NewRouter(httpServer, corsMiddleware, systemApi)
-	serverHTTPServer := server.NewHTTPServer(zapLogger, routerRouter, httpServer)
+	initRepo := repo.NewInitRepo(db)
+	roleRepo := repo.NewRoleRepo(db)
+	initUsecase := usecase.NewInitUsecase(zapLogger, initRepo, userRepo, roleRepo, casbinUsecase)
+	serverHTTPServer := server.NewHTTPServer(zapLogger, routerRouter, httpServer, initUsecase)
 	return serverHTTPServer, nil
 }

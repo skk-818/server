@@ -19,6 +19,8 @@ func New(code int, msg string) *BizError {
 // ========== 通用模块：10 开头 ==========
 var (
 	ErrSuccess               = New(0, "success")
+	ErrForbidden             = New(403, "权限不足")
+	ErrInternal              = New(500, "服务器错误")
 	ErrInvalidParam          = New(100001, "参数错误")
 	ErrUnauthorized          = New(100002, "未授权")
 	ErrInternalServer        = New(100003, "服务器内部错误")
@@ -33,6 +35,7 @@ var (
 	ErrTokenNotValidYet      = New(100012, "token 尚未生效")
 	ErrTokenSignatureInvalid = New(100013, "token 签名无效")
 	ErrTokenParseFailed      = New(100014, "token 解析失败")
+	ErrPermissionDenied      = New(100015, "权限校验失败")
 )
 
 // ========== 用户模块：20 开头 ==========

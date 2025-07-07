@@ -5,5 +5,8 @@ import (
 )
 
 var ProviderSet = wire.NewSet(
+	NewCasbinRepo,
+	NewInitRepo,
 	NewUserRepo,
+	NewRoleRepo,
 )

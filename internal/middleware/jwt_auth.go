@@ -49,6 +49,7 @@ func (jm *JwtMiddleware) Handler() gin.HandlerFunc {
 		}
 
 		c.Set("claims", claims)
+		c.Set("userRoles", claims.Roles)
 
 		c.Next()
 	}

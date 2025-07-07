@@ -17,13 +17,19 @@ type HTTPServer struct {
 	server *http.Server
 	cfg    *config.HTTPServer
 	logger logger.Logger
+	InitManager
 }
 
 type EngineProvider interface {
 	Engine() *gin.Engine
 }
 
-func NewHTTPServer(logger logger.Logger, engine EngineProvider, cfg *config.HTTPServer) *HTTPServer {
+// InitManager 初始化接口
+type InitManager interface {
+	InitIfNeeded() error
+}
+
+func NewHTTPServer(logger logger.Logger, engine EngineProvider, cfg *config.HTTPServer, manager InitManager) *HTTPServer {
 	return &HTTPServer{
 		Engine: engine.Engine(),
 		server: &http.Server{
@@ -32,14 +38,18 @@ func NewHTTPServer(logger logger.Logger, engine EngineProvider, cfg *config.HTTP
 			ReadTimeout:  time.Duration(cfg.ReadTimeout) * time.Second,
 			WriteTimeout: time.Duration(cfg.WriteTimeout) * time.Second,
 		},
-		logger: logger,
+		logger:      logger,
+		InitManager: manager,
 	}
 }
 
 func (s *HTTPServer) Start() error {
-	s.logger.Info("🚀 HTTP server starting...",
-		zap.String("addr", s.server.Addr),
-	)
+	if err := s.InitIfNeeded(); err != nil {
+		s.logger.Error("🚀 HTTP serverInitIfNeeded error", zap.Any("error", err))
+		return err
+	}
+	s.logger.Info("server initialized")
+	s.logger.Info("🚀 HTTP server starting...", zap.String("addr", s.server.Addr))
 	return s.server.ListenAndServe()
 }
 
