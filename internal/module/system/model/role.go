@@ -20,6 +20,15 @@ func (m *Role) TableName() string {
 const (
 	RoleStatusEnable  = 1
 	RoleStatusDisable = 0
+	RoleIsSystem      = 1
+	RoleNotSystem     = 0
+	RoleKeyAdmin      = "R_ADMIN"   // 系统管理员（最高权限）
+	RoleKeyManager    = "R_MANAGER" // 系统普通管理员（具备部分管理权限）
+	RoleKeyUser       = "R_USER"    // 普通用户（业务使用者）
+	RoleKeyGuest      = "R_GUEST"   // 访客角色（只读权限）
+	RoleDataScopeAll  = "all"
+	RoleDataScopeDept = "dept"
+	RoleDataScopeSelf = "self"
 )
 
 var RoleCol = struct {

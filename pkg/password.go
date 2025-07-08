@@ -5,12 +5,10 @@ import (
 )
 
 // HashPassword 加密密码，生成 bcrypt 哈希
-func HashPassword(password string) (string, error) {
-	hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-	return string(hashed), nil
+func HashPassword(password string) string {
+	hashed, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	return string(hashed)
 }
 
 // CheckPassword 校验明文密码和哈希是否匹配

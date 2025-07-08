@@ -2,10 +2,13 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"server/internal/module/system/usecase"
 	"server/pkg/response"
 )
 
-type AuthApi struct{}
+type AuthApi struct {
+	authUsecase *usecase.AuthUsecase
+}
 
 func NewAuthApi() *AuthApi {
 	return &AuthApi{}

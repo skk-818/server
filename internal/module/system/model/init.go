@@ -19,6 +19,10 @@ func (m *Init) TableName() string {
 const (
 	InitInitialized    = 1
 	InitNotInitialized = 0
+	InitNameRole       = "Role"
+	InitNameUser       = "User"
+	InitNameMenu       = "Menu"
+	InitNameCasbin     = "Casbin"
 )
 
 var InitCol = struct {

@@ -43,6 +43,10 @@ func (m *User) TableName() string {
 const (
 	UserStatusEnable  = 1
 	UserStatusDisable = 0
+	UserGenderMale    = 1
+	UserGenderFemale  = 2
+	UserIsSystem      = 1
+	UserNotSystem     = 0
 )
 
 var UserCol = struct {
@@ -69,6 +73,7 @@ var UserCol = struct {
 	Tags        string
 	LastLoginAt string
 	LastLoginIP string
+	Roles       string
 }{
 	ID:          "id",
 	CreatedAt:   "created_at",
@@ -93,4 +98,5 @@ var UserCol = struct {
 	Tags:        "tags",
 	LastLoginAt: "last_login_at",
 	LastLoginIP: "last_login_ip",
+	Roles:       "Roles",
 }

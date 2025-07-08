@@ -9,6 +9,7 @@ import (
 var ProviderSet = wire.NewSet(
 	NewJwtUsecase,
 	wire.Bind(new(middleware.JwtParse), new(*JwtUsecase)),
+	wire.Bind(new(jwtUsecase), new(*JwtUsecase)),
 	NewCasbinUsecase,
 	wire.Bind(new(middleware.CabinEnforce), new(*CasbinUsecase)),
 	wire.Bind(new(casbinUsecase), new(*CasbinUsecase)),
@@ -16,4 +17,5 @@ var ProviderSet = wire.NewSet(
 	wire.Bind(new(server.InitManager), new(*InitUsecase)),
 
 	NewUserUsecase,
+	NewAuthUsecase,
 )
