@@ -11,6 +11,7 @@ type Role struct {
 	Remark    string `gorm:"size:255;default:'';not null;comment:备注信息" json:"remark"`
 
 	Users []*User `gorm:"many2many:sys_user_role;" json:"users"`
+	Menus []*Menu `gorm:"many2many:sys_role_menu;" json:"menus,omitempty"`
 }
 
 func (m *Role) TableName() string {

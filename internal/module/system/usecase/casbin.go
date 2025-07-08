@@ -10,15 +10,17 @@ import (
 	"sync"
 )
 
-type CasbinUsecase struct {
-	logger   logger.Logger
-	enforcer *casbin.Enforcer
-}
+type (
+	CasbinUsecase struct {
+		logger   logger.Logger
+		enforcer *casbin.Enforcer
+	}
 
-type casbinUsecase interface {
-	HasPolicy([]string) (bool, error)
-	AddPolicy([]string) (bool, error)
-}
+	casbinUsecase interface {
+		HasPolicy([]string) (bool, error)
+		AddPolicy([]string) (bool, error)
+	}
+)
 
 var (
 	once     sync.Once

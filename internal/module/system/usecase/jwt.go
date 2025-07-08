@@ -5,14 +5,16 @@ import (
 	"server/pkg/jwt"
 )
 
-type JwtUsecase struct {
-	cfg *config.Jwt
-}
+type (
+	JwtUsecase struct {
+		cfg *config.Jwt
+	}
 
-type jwtUsecase interface {
-	GenerateAccessToken(uint, string, []string) (string, error)
-	GenerateRefreshToken(uint, string, []string) (string, error)
-}
+	jwtUsecase interface {
+		GenerateAccessToken(uint, string, []string) (string, error)
+		GenerateRefreshToken(uint, string, []string) (string, error)
+	}
+)
 
 func NewJwtUsecase(
 	cfg *config.Jwt,
