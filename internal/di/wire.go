@@ -11,7 +11,6 @@ import (
 	"server/internal/middleware"
 	"server/internal/module/system/api"
 	"server/internal/module/system/repo"
-	"server/internal/module/system/service"
 	"server/internal/module/system/usecase"
 	"server/internal/router"
 )
@@ -22,7 +21,6 @@ func InitApp() (*server.HTTPServer, error) {
 		router.ProviderSet,
 		middleware.ProviderSet,
 		api.ProviderSet,
-		service.ProviderSet,
 		usecase.ProviderSet,
 		repo.ProviderSet,
 	)

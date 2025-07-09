@@ -14,7 +14,6 @@ import (
 	"server/internal/middleware"
 	"server/internal/module/system/api"
 	"server/internal/module/system/repo"
-	"server/internal/module/system/service"
 	"server/internal/module/system/usecase"
 	"server/internal/router"
 )
@@ -50,13 +49,21 @@ func InitApp() (*server.HTTPServer, error) {
 	casbinMiddleware := middleware.NewCasbinMiddleware(casbinUsecase)
 	userRepo := repo.NewUserRepo(db)
 	userUsecase := usecase.NewUserUsecase(zapLogger, userRepo)
-	userService := service.NewUserService(userUsecase)
-	userApi := api.NewUserApi(configConfig, userService)
-	authApi := api.NewAuthApi()
-	systemApi := api.NewSystemApi(jwtMiddleware, casbinMiddleware, userApi, authApi)
+	userApi := api.NewUserApi(configConfig, zapLogger, userUsecase)
+	authUsecase := usecase.NewAuthUsecase(zapLogger, userRepo, jwtUsecase)
+	authApi := api.NewAuthApi(zapLogger, authUsecase)
+	roleRepo := repo.NewRoleRepo(db)
+	roleUsecase := usecase.NewRoleUsecase(zapLogger, roleRepo)
+	roleApi := api.NewRoleApi(zapLogger, roleUsecase)
+	apiRepo := repo.NewApiRepo(db)
+	apiUsecase := usecase.NewApiUsecase(zapLogger, apiRepo)
+	apiApi := api.NewApiApi(zapLogger, apiUsecase)
+	menuRepo := repo.NewMenuRepo(db)
+	menuUsecase := usecase.NewMenuUsecase(zapLogger, menuRepo)
+	menuApi := api.NewMenuApi(zapLogger, menuUsecase)
+	systemApi := api.NewSystemApi(jwtMiddleware, casbinMiddleware, userApi, authApi, roleApi, apiApi, menuApi)
 	routerRouter := router.NewRouter(httpServer, corsMiddleware, systemApi)
 	initRepo := repo.NewInitRepo(db)
-	roleRepo := repo.NewRoleRepo(db)
 	initUsecase := usecase.NewInitUsecase(zapLogger, initRepo, userRepo, roleRepo, casbinUsecase)
 	serverHTTPServer := server.NewHTTPServer(zapLogger, routerRouter, httpServer, initUsecase)
 	return serverHTTPServer, nil

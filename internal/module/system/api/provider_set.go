@@ -6,4 +6,7 @@ var ProviderSet = wire.NewSet(
 	NewSystemApi,
 	NewUserApi,
 	NewAuthApi,
+	NewRoleApi,
+	NewApiApi,
+	NewMenuApi,
 )

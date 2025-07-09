@@ -3,18 +3,22 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"server/internal/core/config"
-	"server/internal/module/system/service"
+	"server/internal/core/logger"
+	"server/internal/module/system/usecase"
 	"server/pkg/response"
 )
 
 type UserApi struct {
 	config      *config.Config
-	userService *service.UserService
+	logger      logger.Logger
+	userUsecase *usecase.UserUsecase
 }
 
-func NewUserApi(config *config.Config, userService *service.UserService) *UserApi {
+func NewUserApi(config *config.Config, logger logger.Logger, userUsecase *usecase.UserUsecase) *UserApi {
 	return &UserApi{
-		config: config,
+		config:      config,
+		logger:      logger,
+		userUsecase: userUsecase,
 	}
 }
 

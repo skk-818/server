@@ -28,7 +28,7 @@ func (r *initRepo) AutoMigrate(tables []schema.Tabler) error {
 
 func (r *initRepo) IsInitialized(name string) (bool, error) {
 	var init model.Init
-	err := r.db.Where("name = ?", name).First(&init).Error
+	err := r.db.Where(model.InitCol.Name+" = ?", name).First(&init).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return false, nil //

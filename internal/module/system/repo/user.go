@@ -5,11 +5,37 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"server/internal/module/system/model"
+	"server/internal/module/system/model/request"
 	"server/internal/module/system/usecase/repo"
 )
 
 type userRepo struct {
 	db *gorm.DB
+}
+
+func (r *userRepo) FindByID(ctx context.Context, id int64) (*model.User, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r *userRepo) Update(ctx context.Context, user *model.User) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r *userRepo) Delete(ctx context.Context, id int64) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r *userRepo) List(ctx context.Context, req *request.UserListReq) ([]*model.User, int64, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r *userRepo) BatchDelete(ctx context.Context, ids []int64) error {
+	//TODO implement me
+	panic("implement me")
 }
 
 func NewUserRepo(db *gorm.DB) repo.UserRepo {

@@ -2,41 +2,22 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"server/internal/middleware"
+	"server/internal/core/logger"
+	"server/internal/module/system/usecase"
 )
 
-type SystemApi struct {
-	jwtMiddleware    *middleware.JwtMiddleware
-	casbinMiddleware *middleware.CasbinMiddleware
-	userApi          *UserApi
-	authApi          *AuthApi
+type ApiApi struct {
+	logger     logger.Logger
+	apiUsecase *usecase.ApiUsecase
 }
 
-func NewSystemApi(
-	jwtMiddleware *middleware.JwtMiddleware,
-	casbinMiddle *middleware.CasbinMiddleware,
-	userApi *UserApi,
-	authApi *AuthApi,
-) *SystemApi {
-	return &SystemApi{
-		jwtMiddleware:    jwtMiddleware,
-		casbinMiddleware: casbinMiddle,
-		userApi:          userApi,
-		authApi:          authApi,
+func NewApiApi(logger logger.Logger, apiUsecase *usecase.ApiUsecase) *ApiApi {
+	return &ApiApi{
+		logger:     logger,
+		apiUsecase: apiUsecase,
 	}
 }
 
-func (r *SystemApi) InitSystemApi(router *gin.RouterGroup) {
-	{
-		authRouter := router.Group("auth")
-		r.authApi.InitAuthApi(authRouter)
-	}
+func (a *ApiApi) InitApiApi(router *gin.RouterGroup) {
 
-	privateRouter := router.Group("")
-	privateRouter.Use(r.jwtMiddleware.Handler(), r.casbinMiddleware.Handler())
-
-	{
-		userRouter := router.Group("user")
-		r.userApi.InitUserApi(userRouter)
-	}
 }
