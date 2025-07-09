@@ -27,7 +27,7 @@ func NewUserApi(config *config.Config, logger logger.Logger, userUsecase *usecas
 }
 
 func (a *UserApi) InitUserApi(router *gin.RouterGroup) {
-	router.POST("info", u.Info)
+	router.POST("info", a.Info)
 }
 
 func (a *UserApi) Info(c *gin.Context) {

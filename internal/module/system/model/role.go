@@ -47,7 +47,7 @@ var RoleCol = struct {
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
 	Name:      "name",
-	Key:       "key",
+	Key:       "`key`",
 	Status:    "status",
 	DataScope: "data_scope",
 	Sort:      "sort",
