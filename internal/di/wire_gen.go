@@ -10,6 +10,7 @@ import (
 	"server/internal/core/config"
 	"server/internal/core/logger"
 	"server/internal/core/mysql"
+	router2 "server/internal/core/router"
 	"server/internal/core/server"
 	"server/internal/middleware"
 	"server/internal/module/system/api"
@@ -62,9 +63,10 @@ func InitApp() (*server.HTTPServer, error) {
 	menuUsecase := usecase.NewMenuUsecase(zapLogger, menuRepo)
 	menuApi := api.NewMenuApi(zapLogger, menuUsecase)
 	systemApi := api.NewSystemApi(jwtMiddleware, casbinMiddleware, userApi, authApi, roleApi, apiApi, menuApi)
-	routerRouter := router.NewRouter(httpServer, corsMiddleware, systemApi)
+	group := router.NewGroup(zapLogger, httpServer, corsMiddleware, systemApi)
+	routerRouter := router2.NewRouter(group)
 	initRepo := repo.NewInitRepo(db)
 	initUsecase := usecase.NewInitUsecase(zapLogger, initRepo, userRepo, roleRepo, casbinUsecase)
-	serverHTTPServer := server.NewHTTPServer(zapLogger, routerRouter, httpServer, initUsecase)
+	serverHTTPServer := server.NewHTTPServer(routerRouter, httpServer, initUsecase)
 	return serverHTTPServer, nil
 }
