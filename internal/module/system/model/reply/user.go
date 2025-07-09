@@ -2,30 +2,31 @@ package reply
 
 import (
 	"server/internal/module/system/model"
+	"strings"
 	"time"
 )
 
 type UserInfoReply struct {
-	ID         uint   `json:"id"`
-	Username   string `json:"username"`
-	Nickname   string `json:"nickname"`
-	Email      string `json:"email"`
-	Phone      string `json:"phone"`
-	Avatar     string `json:"avatar"`
-	Gender     int64  `json:"gender"`
-	Status     int64  `json:"status"`
-	IsAdmin    int64  `json:"isAdmin"`
-	Province   string `json:"province"`
-	City       string `json:"city"`
-	District   string `json:"district"`
-	Address    string `json:"address"`
-	Position   string `json:"position"`
-	Department string `json:"department"`
-	JobTitle   string `json:"jobTitle"`
-	Tags       string `json:"tags"`
+	ID         uint     `json:"id"`
+	Username   string   `json:"username"`
+	Nickname   string   `json:"nickname"`
+	Email      string   `json:"email"`
+	Phone      string   `json:"phone"`
+	Avatar     string   `json:"avatar"`
+	Gender     int64    `json:"gender"`
+	Status     int64    `json:"status"`
+	IsAdmin    int64    `json:"isAdmin"`
+	Province   string   `json:"province"`
+	City       string   `json:"city"`
+	District   string   `json:"district"`
+	Address    string   `json:"address"`
+	Position   string   `json:"position"`
+	Department string   `json:"department"`
+	JobTitle   string   `json:"jobTitle"`
+	Tags       []string `json:"tags"`
 
 	LastLoginAt *time.Time `json:"lastLoginAt,omitempty"`
-	LastLoginIP string     `json:"lastLoginIP"`
+	LastLoginIP string     `json:"lastLoginIP,omitempty"`
 
 	Roles []string `json:"roles"`
 }
@@ -53,7 +54,7 @@ func ToUserInfoReply(user *model.User) *UserInfoReply {
 		Position:    user.Position,
 		Department:  user.Department,
 		JobTitle:    user.JobTitle,
-		Tags:        user.Tags,
+		Tags:        strings.Split(user.Tags, ","),
 		LastLoginAt: user.LastLoginAt,
 		LastLoginIP: user.LastLoginIP,
 		Roles:       roles,

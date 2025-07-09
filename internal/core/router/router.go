@@ -4,14 +4,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Router struct {
-	engine *gin.Engine
-	Provider
-}
+type (
+	Router struct {
+		engine *gin.Engine
+		Provider
+	}
 
-type Provider interface {
-	InitRouter(*gin.Engine) error
-}
+	Provider interface {
+		InitRouter(*gin.Engine) error
+	}
+)
 
 func NewRouter(provider Provider) *Router {
 	engine := gin.Default()

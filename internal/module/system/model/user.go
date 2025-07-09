@@ -9,7 +9,7 @@ type User struct {
 	Password string `gorm:"size:128;not null;comment:密码" json:"-"`
 	Nickname string `gorm:"size:64;not null;default:'';comment:用户昵称" json:"nickname"`
 	Email    string `gorm:"size:128;not null;default:'';comment:邮箱" json:"email"`
-	Phone    string `gorm:"size:20;not null;default:'';comment:手机号" json:"phone"`
+	Phone    string `gorm:"size:20;not null;uniqueIndex;comment:手机号" json:"phone"`
 	Avatar   string `gorm:"size:255;not null;default:'';comment:头像URL" json:"avatar"`
 
 	Gender  int64 `gorm:"type:tinyint(1);not null;default:0;comment:性别（0未知 1男 2女）" json:"gender"`

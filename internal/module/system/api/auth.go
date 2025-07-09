@@ -24,6 +24,7 @@ func NewAuthApi(logger logger.Logger, authUsecase *usecase.AuthUsecase) *AuthApi
 
 func (a *AuthApi) InitAuthApi(router *gin.RouterGroup) {
 	router.POST("login", a.Login)
+	router.POST("register", a.Register)
 }
 
 func (a *AuthApi) Login(c *gin.Context) {
@@ -41,4 +42,20 @@ func (a *AuthApi) Login(c *gin.Context) {
 		return
 	}
 	response.SuccessWithData(c, reply)
+}
+
+func (a *AuthApi) Register(c *gin.Context) {
+	var req request.RegisterReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		a.logger.Error("[AuthApi] ShouldBindJSON error", zap.Any("req", req), zap.Any("err", err))
+		response.Fail(c, xerror.ErrInvalidParam)
+		return
+	}
+
+	if err := a.authUsecase.Register(c, &req); err != nil {
+		a.logger.Error("[AuthApi] Register error", zap.Any("req", req), zap.Error(err))
+		response.Fail(c, err)
+		return
+	}
+	response.Success(c)
 }

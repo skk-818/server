@@ -10,22 +10,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type HTTPServer struct {
-	server *http.Server
-	cfg    *config.HTTPServer
-	InitManager
-	EngineProvider
-}
+type (
+	HTTPServer struct {
+		server *http.Server
+		cfg    *config.HTTPServer
+		InitManager
+		EngineProvider
+	}
 
-type EngineProvider interface {
-	Engine() *gin.Engine
-	Initializer() error
-}
+	EngineProvider interface {
+		Engine() *gin.Engine
+		Initializer() error
+	}
 
-// InitManager 初始化接口
-type InitManager interface {
-	InitIfNeeded() error
-}
+	InitManager interface {
+		InitIfNeeded() error
+	}
+)
 
 func NewHTTPServer(engine EngineProvider, cfg *config.HTTPServer, manager InitManager) *HTTPServer {
 	return &HTTPServer{

@@ -38,11 +38,14 @@ var (
 	ErrPermissionDenied      = New(100015, "权限校验失败")
 )
 
-// ========== 用户模块：20 开头 ==========
 var (
 	ErrUserNotFound          = New(200001, "用户不存在")
 	ErrUserConflict          = New(200002, "用户已存在")
 	ErrUserLoginFail         = New(200003, "用户名或密码错误")
 	ErrUserPasswordNotMatch  = New(200004, "密码错误")
 	ErrAuthGenerateTokenFail = New(200005, "生成 token 失败")
+)
+
+var (
+	ErrRoleNotFound = New(300001, "角色不存在")
 )
