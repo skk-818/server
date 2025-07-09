@@ -13,33 +13,79 @@ type roleRepo struct {
 	db *gorm.DB
 }
 
+func NewRoleRepo(db *gorm.DB) repo.RoleRepo {
+	return &roleRepo{db: db}
+}
+
 func (r *roleRepo) Delete(ctx context.Context, id int64) error {
-	//TODO implement me
-	panic("implement me")
+	err := r.db.WithContext(ctx).
+		Where("id = ?", id).
+		Delete(&model.Role{}).Error
+	return errors.WithStack(err)
 }
 
 func (r *roleRepo) Update(ctx context.Context, role *model.Role) error {
-	//TODO implement me
-	panic("implement me")
+	// 建议使用 Select("*")，更新所有字段（包括零值）
+	err := r.db.WithContext(ctx).
+		Model(&model.Role{}).
+		Where("id = ?", role.ID).
+		Select("*").
+		Updates(role).Error
+	return errors.WithStack(err)
 }
 
 func (r *roleRepo) FindByID(ctx context.Context, id int64) (*model.Role, error) {
-	//TODO implement me
-	panic("implement me")
+	var role model.Role
+	err := r.db.WithContext(ctx).
+		Where("id = ?", id).
+		First(&role).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, errors.WithStack(err)
+	}
+	return &role, nil
 }
 
 func (r *roleRepo) List(ctx context.Context, req *request.RoleListReq) ([]*model.Role, int64, error) {
-	//TODO implement me
-	panic("implement me")
+	var (
+		roles []*model.Role
+		total int64
+		db    = r.db.WithContext(ctx).Model(&model.Role{})
+	)
+
+	if req.Name != "" {
+		db = db.Where("name LIKE ?", "%"+req.Name+"%")
+	}
+
+	if req.Status != nil {
+		db = db.Where("status = ?", *req.Status)
+	}
+
+	err := db.Count(&total).Error
+	if err != nil {
+		return nil, 0, errors.WithStack(err)
+	}
+
+	err = db.Order("sort ASC").
+		Limit(req.PageSize).
+		Offset((req.Page - 1) * req.PageSize).
+		Find(&roles).Error
+
+	if err != nil {
+		return nil, 0, errors.WithStack(err)
+	}
+
+	return roles, total, nil
 }
 
 func (r *roleRepo) BatchDelete(ctx context.Context, ids []int64) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func NewRoleRepo(db *gorm.DB) repo.RoleRepo {
-	return &roleRepo{db: db}
+	err := r.db.WithContext(ctx).
+		Where("id IN ?", ids).
+		Delete(&model.Role{}).Error
+	return errors.WithStack(err)
 }
 
 func (r *roleRepo) Create(ctx context.Context, role *model.Role) error {

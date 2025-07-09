@@ -9,7 +9,7 @@ import (
 type UserRepo interface {
 	Create(context.Context, *model.User) error
 	FindByUsername(context.Context, string) (*model.User, error)
-	FindByID(context.Context, int64) (*model.User, error)
+	Find(context.Context, int64) (*model.User, error)
 	Update(context.Context, *model.User) error
 	Delete(context.Context, int64) error
 	List(context.Context, *request.UserListReq) ([]*model.User, int64, error)

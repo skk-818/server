@@ -2,9 +2,12 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"server/internal/core/logger"
+	"server/internal/module/system/model/request"
 	"server/internal/module/system/usecase"
 	"server/pkg/response"
+	"server/pkg/xerror"
 )
 
 type AuthApi struct {
@@ -19,10 +22,23 @@ func NewAuthApi(logger logger.Logger, authUsecase *usecase.AuthUsecase) *AuthApi
 	}
 }
 
-func (aa *AuthApi) InitAuthApi(router *gin.RouterGroup) {
-	router.POST("login", aa.Login)
+func (a *AuthApi) InitAuthApi(router *gin.RouterGroup) {
+	router.POST("login", a.Login)
 }
 
-func (aa *AuthApi) Login(c *gin.Context) {
-	response.SuccessWithData(c, gin.H{"token": "123456", "refreshToken": "123456"})
+func (a *AuthApi) Login(c *gin.Context) {
+	var req request.LoginReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		a.logger.Error("[AuthApi] ShouldBindJSON error", zap.Any("req", req), zap.Any("err", err))
+		response.Fail(c, xerror.ErrInvalidParam)
+		return
+	}
+
+	reply, err := a.authUsecase.Login(c, &req)
+	if err != nil {
+		a.logger.Error("[AuthApi] Login error", zap.Any("req", req), zap.Error(err))
+		response.Fail(c, err)
+		return
+	}
+	response.SuccessWithData(c, reply)
 }

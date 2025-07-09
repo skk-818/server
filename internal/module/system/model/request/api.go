@@ -14,7 +14,7 @@ type GetApiReq struct {
 
 type ApiListReq struct {
 	PageInfo
-	Path    string `json:"path"`
-	Methods string `json:"methods"`
-	Status  int64  `json:"status"`
+	Path   string `json:"path"`
+	Method string `json:"method"`
+	Status int64  `json:"status"`
 }

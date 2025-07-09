@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"server/internal/module/system/model"
 	"server/internal/module/system/model/request"
@@ -16,32 +17,59 @@ func NewMenuRepo(db *gorm.DB) repo.MenuRepo {
 	return &menuRepo{db: db}
 }
 
-func (m menuRepo) Create(ctx context.Context, menu *model.Menu) error {
-	//TODO implement me
-	panic("implement me")
+func (m *menuRepo) Create(ctx context.Context, menu *model.Menu) error {
+	err := m.db.WithContext(ctx).Create(menu).Error
+	return errors.WithStack(err)
 }
 
-func (m menuRepo) Update(ctx context.Context, menu *model.Menu) error {
-	//TODO implement me
-	panic("implement me")
+func (m *menuRepo) Update(ctx context.Context, menu *model.Menu) error {
+	err := m.db.WithContext(ctx).Save(menu).Error
+	return errors.WithStack(err)
 }
 
-func (m menuRepo) Delete(ctx context.Context, id int64) error {
-	//TODO implement me
-	panic("implement me")
+func (m *menuRepo) Delete(ctx context.Context, id int64) error {
+	err := m.db.WithContext(ctx).Delete(&model.Menu{}, id).Error
+	return errors.WithStack(err)
 }
 
-func (m menuRepo) Find(ctx context.Context, id int64) (*model.Menu, error) {
-	//TODO implement me
-	panic("implement me")
+func (m *menuRepo) Find(ctx context.Context, id int64) (*model.Menu, error) {
+	var menu model.Menu
+	err := m.db.WithContext(ctx).First(&menu, id).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil // 没找到返回nil,nil
+		}
+		return nil, errors.WithStack(err)
+	}
+	return &menu, nil
 }
 
-func (m menuRepo) List(ctx context.Context, req *request.MenuListReq) ([]*model.Menu, int64, error) {
-	//TODO implement me
-	panic("implement me")
+func (m *menuRepo) List(ctx context.Context, req *request.MenuListReq) ([]*model.Menu, int64, error) {
+	var menus []*model.Menu
+	var total int64
+
+	db := m.db.WithContext(ctx).Model(&model.Menu{})
+
+	if req.Name != "" {
+		db = db.Where("name LIKE ?", "%"+req.Name+"%")
+	}
+	if req.ParentID != 0 {
+		db = db.Where("parent_id = ?", req.ParentID)
+	}
+
+	if err := db.Count(&total).Error; err != nil {
+		return nil, 0, errors.WithStack(err)
+	}
+
+	offset := (req.Page - 1) * req.PageSize
+	if err := db.Order("sort ASC").Limit(int(req.PageSize)).Offset(int(offset)).Find(&menus).Error; err != nil {
+		return nil, 0, errors.WithStack(err)
+	}
+
+	return menus, total, nil
 }
 
-func (m menuRepo) BatchDelete(ctx context.Context, ids []int64) error {
-	//TODO implement me
-	panic("implement me")
+func (m *menuRepo) BatchDelete(ctx context.Context, ids []int64) error {
+	err := m.db.WithContext(ctx).Where("id IN ?", ids).Delete(&model.Menu{}).Error
+	return errors.WithStack(err)
 }

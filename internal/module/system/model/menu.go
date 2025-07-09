@@ -23,7 +23,6 @@ type Menu struct {
 	ActivePath string `gorm:"size:255;default:''" json:"activePath"` // 激活的路径
 	Sort       int64  `gorm:"not null;default:0" json:"sort"`        // 排序字段
 
-	Roles []*Role `gorm:"many2many:sys_role_menus;" json:"roles,omitempty"`
 }
 
 var MenuCol = struct {
