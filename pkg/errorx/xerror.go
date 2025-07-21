@@ -44,6 +44,7 @@ var (
 	ErrUserLoginFail         = New(200003, "用户名或密码错误")
 	ErrUserPasswordNotMatch  = New(200004, "密码错误")
 	ErrAuthGenerateTokenFail = New(200005, "生成 token 失败")
+	ErrUserIsSystem          = New(200006, "用户为系统内置用户")
 )
 
 var (

@@ -124,3 +124,19 @@ func (r *userRepo) FindByPhone(ctx context.Context, phone string) (*model.User, 
 	}
 	return &user, nil
 }
+
+func (r *userRepo) FindByIds(ctx context.Context, ids []int64) ([]*model.User, error) {
+	var users []*model.User
+	err := r.db.WithContext(ctx).
+		Preload(model.UserCol.Roles).
+		Where("id IN (?)", ids).
+		Find(&users).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, errors.WithStack(err)
+	}
+	return users, nil
+}

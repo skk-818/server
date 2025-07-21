@@ -110,3 +110,12 @@ func (r *roleRepo) FindByIDs(ctx context.Context, ids []int64) ([]*model.Role, e
 	}
 	return roles, nil
 }
+
+func (r *roleRepo) FindByKeys(ctx context.Context, keys []string) ([]*model.Role, error) {
+	var roles []*model.Role
+	err := r.db.WithContext(ctx).Where(model.RoleCol.Key+" IN ?", keys).Find(&roles).Error
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return roles, nil
+}

@@ -5,11 +5,10 @@ import (
 	"go.uber.org/zap"
 	"server/internal/core/config"
 	"server/internal/core/logger"
-	"server/internal/module/system/model/reply"
 	"server/internal/module/system/usecase"
 	"server/pkg"
+	"server/pkg/errorx"
 	"server/pkg/response"
-	"server/pkg/xerror"
 )
 
 type UserApi struct {
@@ -37,12 +36,12 @@ func (a *UserApi) Info(c *gin.Context) {
 		return
 	}
 
-	userInfo, err := a.userUsecase.GetUserInfo(c, int(userId))
+	userInfo, err := a.userUsecase.GetInfo(c, int(userId))
 	if err != nil {
 		a.logger.Error("[UserApi] GetUserInfo error", zap.Any("userId", userId), zap.Error(err))
 		response.Fail(c, err)
 		return
 	}
 
-	response.SuccessWithData(c, reply.ToUserInfoReply(userInfo))
+	response.SuccessWithData(c, userInfo)
 }

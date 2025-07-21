@@ -15,4 +15,5 @@ type UserRepo interface {
 	List(context.Context, *request.UserListReq) ([]*model.User, int64, error)
 	BatchDelete(context.Context, []int64) error
 	FindByPhone(context.Context, string) (*model.User, error)
+	FindByIds(context.Context, []int64) ([]*model.User, error)
 }
