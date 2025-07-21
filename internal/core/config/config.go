@@ -10,6 +10,7 @@ type Config struct {
 	MySQL  *Mysql      `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
 	Http   *HTTPServer `mapstructure:"http" json:"http" yaml:"http"`
 	Jwt    *Jwt        `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
+	Redis  *Redis      `mapstructure:"redis" json:"redis" yaml:"redis"`
 }
 
 const FilePath = "./etc/config.yaml" // 配置文件路径常量
@@ -50,4 +51,8 @@ func ProviderCorsConfig(cfg *Config) *Cors {
 
 func ProvideJwtConfig(cfg *Config) *Jwt {
 	return cfg.Jwt
+}
+
+func ProvideRedisConfig(cfg *Config) *Redis {
+	return cfg.Redis
 }

@@ -24,6 +24,6 @@ func (r *Router) Engine() *gin.Engine {
 	return r.engine
 }
 
-func (r *Router) Initializer() error {
+func (r *Router) InitIfNeeded() error {
 	return r.Provider.InitRouter(r.engine)
 }

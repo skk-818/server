@@ -12,15 +12,14 @@ import (
 
 type (
 	HTTPServer struct {
-		server *http.Server
-		cfg    *config.HTTPServer
-		InitManager
+		server      *http.Server
+		cfg         *config.HTTPServer
+		initManager []InitManager
 		EngineProvider
 	}
 
 	EngineProvider interface {
 		Engine() *gin.Engine
-		Initializer() error
 	}
 
 	InitManager interface {
@@ -28,7 +27,7 @@ type (
 	}
 )
 
-func NewHTTPServer(engine EngineProvider, cfg *config.HTTPServer, manager InitManager) *HTTPServer {
+func NewHTTPServer(engine EngineProvider, cfg *config.HTTPServer, manager []InitManager) *HTTPServer {
 	return &HTTPServer{
 		server: &http.Server{
 			Addr:         fmt.Sprintf(":%s", cfg.Addr),
@@ -36,17 +35,18 @@ func NewHTTPServer(engine EngineProvider, cfg *config.HTTPServer, manager InitMa
 			ReadTimeout:  time.Duration(cfg.ReadTimeout) * time.Second,
 			WriteTimeout: time.Duration(cfg.WriteTimeout) * time.Second,
 		},
-		InitManager:    manager,
+		initManager:    manager,
 		EngineProvider: engine,
 	}
 }
 
 func (s *HTTPServer) Start() error {
-	if err := s.InitManager.InitIfNeeded(); err != nil {
-		return err
-	}
-	if err := s.EngineProvider.Initializer(); err != nil {
-		return err
+	if len(s.initManager) > 0 {
+		for _, m := range s.initManager {
+			if err := m.InitIfNeeded(); err != nil {
+				return err
+			}
+		}
 	}
 	return s.server.ListenAndServe()
 }

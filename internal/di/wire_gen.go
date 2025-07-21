@@ -7,6 +7,7 @@
 package di
 
 import (
+	"server/internal/core"
 	"server/internal/core/config"
 	"server/internal/core/logger"
 	"server/internal/core/mysql"
@@ -67,6 +68,8 @@ func InitApp() (*server.HTTPServer, error) {
 	routerRouter := router2.NewRouter(group)
 	initRepo := repo.NewInitRepo(db)
 	initUsecase := usecase.NewInitUsecase(zapLogger, initRepo, userRepo, roleRepo, casbinUsecase)
-	serverHTTPServer := server.NewHTTPServer(routerRouter, httpServer, initUsecase)
+	cronUsecase := usecase.NewCronUsecase()
+	v := core.NewInitManagerProvider(routerRouter, initUsecase, cronUsecase)
+	serverHTTPServer := server.NewHTTPServer(routerRouter, httpServer, v)
 	return serverHTTPServer, nil
 }
