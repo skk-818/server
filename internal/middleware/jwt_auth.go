@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"server/pkg/jwt"
+	"server/pkg/errorx"
+	"server/pkg/jwtx"
 	"server/pkg/response"
-	"server/pkg/xerror"
 	"strings"
 
 	"github.com/gin-gonic/gin"
