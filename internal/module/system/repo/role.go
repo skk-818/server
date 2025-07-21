@@ -57,11 +57,7 @@ func (r *roleRepo) List(ctx context.Context, req *request.RoleListReq) ([]*model
 	)
 
 	if req.Name != "" {
-		db = db.Where("name LIKE ?", "%"+req.Name+"%")
-	}
-
-	if req.Status != nil {
-		db = db.Where("status = ?", *req.Status)
+		db = db.Where(model.RoleCol.Name+" LIKE ?", "%"+req.Name+"%")
 	}
 
 	err := db.Count(&total).Error
@@ -69,9 +65,10 @@ func (r *roleRepo) List(ctx context.Context, req *request.RoleListReq) ([]*model
 		return nil, 0, errors.WithStack(err)
 	}
 
-	err = db.Order("sort ASC").
-		Limit(req.PageSize).
-		Offset((req.Page - 1) * req.PageSize).
+	offset, limit := req.BuilderOffsetAndLimit()
+	err = db.Order(model.RoleCol.Sort + " ASC").
+		Limit(limit).
+		Offset(offset).
 		Find(&roles).Error
 
 	if err != nil {
@@ -103,4 +100,13 @@ func (r *roleRepo) FindByKey(ctx context.Context, key string) (*model.Role, erro
 		return nil, errors.WithStack(err)
 	}
 	return &role, nil
+}
+
+func (r *roleRepo) FindByIDs(ctx context.Context, ids []int64) ([]*model.Role, error) {
+	var roles []*model.Role
+	err := r.db.WithContext(ctx).Where(model.RoleCol.ID+" IN ?", ids).Find(&roles).Error
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return roles, nil
 }

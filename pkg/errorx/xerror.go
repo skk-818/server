@@ -1,4 +1,4 @@
-package xerror
+package errorx
 
 type BizError struct {
 	Code    int    `json:"code"`
@@ -47,5 +47,12 @@ var (
 )
 
 var (
-	ErrRoleNotFound = New(300001, "角色不存在")
+	ErrRoleNotFound      = New(300001, "角色不存在")
+	ErrAddPoliciesFail   = New(300002, "分配权限失败")
+	ErrRoleAlreadyExists = New(300003, "角色已存在")
+	ErrRoleIsSystem      = New(300004, "角色为系统内置角色")
+)
+
+var (
+	ErrApiNotFound = New(400001, "接口不存在")
 )

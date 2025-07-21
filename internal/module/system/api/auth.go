@@ -31,7 +31,7 @@ func (a *AuthApi) Login(c *gin.Context) {
 	var req request.LoginReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		a.logger.Error("[AuthApi] ShouldBindJSON error", zap.Any("req", req), zap.Any("err", err))
-		response.Fail(c, xerror.ErrInvalidParam)
+		response.Fail(c, errorx.ErrInvalidParam)
 		return
 	}
 
@@ -48,7 +48,7 @@ func (a *AuthApi) Register(c *gin.Context) {
 	var req request.RegisterReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		a.logger.Error("[AuthApi] ShouldBindJSON error", zap.Any("req", req), zap.Any("err", err))
-		response.Fail(c, xerror.ErrInvalidParam)
+		response.Fail(c, errorx.ErrInvalidParam)
 		return
 	}
 

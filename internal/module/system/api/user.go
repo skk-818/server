@@ -33,7 +33,7 @@ func (a *UserApi) InitUserApi(router *gin.RouterGroup) {
 func (a *UserApi) Info(c *gin.Context) {
 	userId := pkg.GetUserID(c)
 	if userId == 0 {
-		response.Fail(c, xerror.ErrUnauthorized)
+		response.Fail(c, errorx.ErrUnauthorized)
 		return
 	}
 

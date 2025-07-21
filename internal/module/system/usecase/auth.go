@@ -34,16 +34,16 @@ func (u *AuthUsecase) Login(ctx context.Context, req *request.LoginReq) (*reply.
 	user, err := u.userRepo.FindByUsername(ctx, req.Username)
 	if err != nil {
 		u.logger.Error("[AuthUsecase] userRepo.FindByUsername error", zap.Any("req", req), zap.Error(err))
-		return nil, xerror.ErrInternal
+		return nil, errorx.ErrInternal
 	}
 	if user == nil {
 		u.logger.Error("[AuthUsecase] userRepo.FindByUsername user not find", zap.Any("req", req))
-		return nil, xerror.ErrUserNotFound
+		return nil, errorx.ErrUserNotFound
 	}
 
 	if !pkg.CheckPassword(user.Password, req.Password) {
 		u.logger.Error("[AuthUsecase] userRepo.FindByUsername password not match", zap.Any("req", req))
-		return nil, xerror.ErrUserPasswordNotMatch
+		return nil, errorx.ErrUserPasswordNotMatch
 	}
 
 	roleKeys := make([]string, 0)
@@ -56,13 +56,13 @@ func (u *AuthUsecase) Login(ctx context.Context, req *request.LoginReq) (*reply.
 	accessToken, err := u.jwtUsecase.GenerateAccessToken(uint(user.ID), user.Username, roleKeys)
 	if err != nil {
 		u.logger.Error("[AuthUsecase] GenerateAccessToken error", zap.Any("req", req), zap.Error(err))
-		return nil, xerror.ErrAuthGenerateTokenFail
+		return nil, errorx.ErrAuthGenerateTokenFail
 	}
 
 	refreshToken, err := u.jwtUsecase.GenerateRefreshToken(uint(user.ID), user.Username, roleKeys)
 	if err != nil {
 		u.logger.Error("[AuthUsecase] GenerateRefreshToken error", zap.Any("req", req), zap.Error(err))
-		return nil, xerror.ErrAuthGenerateTokenFail
+		return nil, errorx.ErrAuthGenerateTokenFail
 	}
 
 	return &reply.LoginReply{
@@ -75,21 +75,21 @@ func (u *AuthUsecase) Register(ctx context.Context, req *request.RegisterReq) er
 	user, err := u.userRepo.FindByPhone(ctx, req.Phone)
 	if err != nil {
 		u.logger.Error("[AuthUsecase] userRepo.FindByUsername error", zap.Any("req", req), zap.Error(err))
-		return xerror.ErrInternal
+		return errorx.ErrInternal
 	}
 	if user != nil {
 		u.logger.Error("[AuthUsecase] userRepo.FindByUsername user exist", zap.Any("req", req))
-		return xerror.ErrUserConflict
+		return errorx.ErrUserConflict
 	}
 
 	role, err := u.roleRepo.FindByKey(ctx, model.RoleKeyUser)
 	if err != nil {
 		u.logger.Error("[AuthUsecase] roleRepo.FindByKey error", zap.Any("req", req), zap.Error(err))
-		return xerror.ErrInternal
+		return errorx.ErrInternal
 	}
 	if role == nil {
 		u.logger.Error("[AuthUsecase] roleRepo.FindByKey role not found", zap.Any("req", req))
-		return xerror.ErrRoleNotFound
+		return errorx.ErrRoleNotFound
 	}
 
 	createUser := &model.User{
@@ -107,7 +107,7 @@ func (u *AuthUsecase) Register(ctx context.Context, req *request.RegisterReq) er
 
 	if err := u.userRepo.Create(ctx, createUser); err != nil {
 		u.logger.Error("[AuthUsecase] userRepo.Create error", zap.Any("user", createUser), zap.Error(err))
-		return xerror.ErrInternal
+		return errorx.ErrInternal
 	}
 
 	return nil

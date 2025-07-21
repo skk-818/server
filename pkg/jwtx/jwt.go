@@ -1,4 +1,4 @@
-package jwt
+package jwtx
 
 import (
 	"errors"
@@ -55,28 +55,28 @@ func (j *Jwt) ParseToken(tokenStr string) (*CustomClaims, error) {
 	if err != nil {
 		// 判断是否为 token 过期
 		if errors.Is(err, jwt.ErrTokenExpired) {
-			return nil, xerror.ErrTokenExpired
+			return nil, errorx.ErrTokenExpired
 		}
 		if errors.Is(err, jwt.ErrTokenMalformed) {
-			return nil, xerror.ErrTokenMalformed
+			return nil, errorx.ErrTokenMalformed
 		}
 		if errors.Is(err, jwt.ErrTokenNotValidYet) {
-			return nil, xerror.ErrTokenNotValidYet
+			return nil, errorx.ErrTokenNotValidYet
 		}
 		if errors.Is(err, jwt.ErrTokenSignatureInvalid) {
-			return nil, xerror.ErrTokenSignatureInvalid
+			return nil, errorx.ErrTokenSignatureInvalid
 		}
-		return nil, xerror.ErrTokenParseFailed
+		return nil, errorx.ErrTokenParseFailed
 	}
 
 	// token 是否有效
 	if !token.Valid {
-		return nil, xerror.ErrTokenInvalid
+		return nil, errorx.ErrTokenInvalid
 	}
 
 	// 校验 claims 是否正确
 	if claims.ExpiresAt != nil && claims.ExpiresAt.Time.Before(time.Now()) {
-		return nil, xerror.ErrTokenExpired
+		return nil, errorx.ErrTokenExpired
 	}
 
 	return claims, nil

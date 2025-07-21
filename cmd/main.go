@@ -18,14 +18,12 @@ func main() {
 		log.Fatalf("init error: %v", err)
 	}
 
-	// 优雅退出
 	go func() {
 		if err := app.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("listen error: %v", err)
 		}
 	}()
 
-	// 捕获退出信号
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit

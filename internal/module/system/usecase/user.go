@@ -29,7 +29,7 @@ func (u *UserUsecase) GetUserInfo(c *gin.Context, userId int) (*model.User, erro
 	}
 	if user == nil {
 		u.logger.Warn("[UserUsecase] userRepo.Find user not find", zap.Any("userId", userId), zap.Error(err))
-		return nil, xerror.ErrUserNotFound
+		return nil, errorx.ErrUserNotFound
 	}
 	return user, nil
 }

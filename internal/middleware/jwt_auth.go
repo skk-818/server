@@ -10,7 +10,7 @@ import (
 )
 
 type JwtParse interface {
-	Parse(string string) (*jwt.CustomClaims, error)
+	Parse(string string) (*jwtx.CustomClaims, error)
 }
 
 type JwtMiddleware struct {
@@ -28,14 +28,14 @@ func (jm *JwtMiddleware) Handler() gin.HandlerFunc {
 		// 从 Header 获取 Authorization: Bearer <token>
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			response.Fail(c, xerror.ErrAuthHeaderMissing)
+			response.Fail(c, errorx.ErrAuthHeaderMissing)
 			c.Abort()
 			return
 		}
 
 		parts := strings.SplitN(authHeader, " ", 2)
 		if !(len(parts) == 2 && strings.EqualFold(parts[0], "Bearer")) {
-			response.Fail(c, xerror.ErrAuthHeaderFormat)
+			response.Fail(c, errorx.ErrAuthHeaderFormat)
 			c.Abort()
 			return
 		}
@@ -43,7 +43,7 @@ func (jm *JwtMiddleware) Handler() gin.HandlerFunc {
 		// 解析 JWT
 		claims, err := jm.Parse(parts[1])
 		if err != nil {
-			response.Fail(c, xerror.ErrInvalidToken)
+			response.Fail(c, errorx.ErrInvalidToken)
 			c.Abort()
 			return
 		}

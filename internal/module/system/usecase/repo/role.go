@@ -14,4 +14,5 @@ type RoleRepo interface {
 	FindByID(context.Context, int64) (*model.Role, error)
 	List(context.Context, *request.RoleListReq) ([]*model.Role, int64, error)
 	BatchDelete(context.Context, []int64) error
+	FindByIDs(context.Context, []int64) ([]*model.Role, error)
 }

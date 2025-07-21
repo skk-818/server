@@ -13,4 +13,5 @@ type ApiRepo interface {
 	Find(context.Context, int64) (*model.Api, error)
 	List(context.Context, *request.ApiListReq) ([]*model.Api, int64, error)
 	BatchDelete(context.Context, []int64) error
+	FindByIds(context.Context, []int64) ([]*model.Api, error)
 }

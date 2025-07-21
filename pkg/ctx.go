@@ -5,12 +5,12 @@ import (
 	"server/pkg/jwt"
 )
 
-func GetClaims(c *gin.Context) *jwt.CustomClaims {
+func GetClaims(c *gin.Context) *jwtx.CustomClaims {
 	val, exists := c.Get("claims")
 	if !exists {
 		return nil
 	}
-	claims, ok := val.(*jwt.CustomClaims)
+	claims, ok := val.(*jwtx.CustomClaims)
 	if !ok {
 		return nil
 	}

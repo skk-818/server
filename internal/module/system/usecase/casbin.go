@@ -19,6 +19,8 @@ type (
 	casbinUsecase interface {
 		HasPolicy([]string) (bool, error)
 		AddPolicy([]string) (bool, error)
+		DeletePermissionsForRole(role string) error
+		AddPolicies(policies [][]string) (bool, error)
 	}
 )
 
@@ -101,4 +103,40 @@ func (u *CasbinUsecase) HasPolicy(policy []string) (bool, error) {
 
 func (u *CasbinUsecase) AddPolicy(policy []string) (bool, error) {
 	return u.enforcer.AddPolicy(policy)
+}
+
+func (u *CasbinUsecase) DeletePermissionsForRole(role string) error {
+	_, err := u.enforcer.RemoveFilteredPolicy(0, role)
+	if err != nil {
+		u.logger.Error("删除角色权限失败", zap.String("role", role), zap.Error(err))
+		return err
+	}
+
+	if err := u.enforcer.SavePolicy(); err != nil {
+		u.logger.Error("保存策略失败", zap.Error(err))
+		return err
+	}
+
+	u.logger.Info("删除角色权限成功", zap.String("role", role))
+	return nil
+}
+
+func (u *CasbinUsecase) AddPolicies(policies [][]string) (bool, error) {
+	success, err := u.enforcer.AddPolicies(policies)
+	if err != nil {
+		u.logger.Error("批量添加权限失败", zap.Any("policies", policies), zap.Error(err))
+		return false, err
+	}
+	if !success {
+		u.logger.Warn("批量添加权限未成功，可能权限已存在", zap.Any("policies", policies))
+		return false, nil
+	}
+
+	if err := u.enforcer.SavePolicy(); err != nil {
+		u.logger.Error("保存策略失败", zap.Error(err))
+		return false, err
+	}
+
+	u.logger.Info("批量添加权限成功", zap.Any("policies", policies))
+	return true, nil
 }

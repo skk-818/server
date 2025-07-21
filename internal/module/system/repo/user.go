@@ -68,16 +68,9 @@ func (r *userRepo) List(ctx context.Context, req *request.UserListReq) ([]*model
 		return nil, 0, errors.WithStack(err)
 	}
 
-	if req.Page <= 0 {
-		req.Page = 1
-	}
-	if req.PageSize <= 0 {
-		req.PageSize = 10
-	}
-
-	offset := (req.Page - 1) * req.PageSize
+	offset, limit := req.BuilderOffsetAndLimit()
 	err = db.Order("id DESC").
-		Limit(req.PageSize).
+		Limit(limit).
 		Offset(offset).
 		Find(&users).Error
 

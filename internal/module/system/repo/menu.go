@@ -61,8 +61,8 @@ func (m *menuRepo) List(ctx context.Context, req *request.MenuListReq) ([]*model
 		return nil, 0, errors.WithStack(err)
 	}
 
-	offset := (req.Page - 1) * req.PageSize
-	if err := db.Order("sort ASC").Limit(int(req.PageSize)).Offset(int(offset)).Find(&menus).Error; err != nil {
+	offset, limit := req.BuilderOffsetAndLimit()
+	if err := db.Order("sort ASC").Limit(limit).Offset(offset).Error; err != nil {
 		return nil, 0, errors.WithStack(err)
 	}
 

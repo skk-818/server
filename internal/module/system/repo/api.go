@@ -17,24 +17,24 @@ func NewApiRepo(db *gorm.DB) repo.ApiRepo {
 	return &apiRepo{db: db}
 }
 
-func (a *apiRepo) Create(ctx context.Context, api *model.Api) error {
-	err := a.db.WithContext(ctx).Create(api).Error
+func (r *apiRepo) Create(ctx context.Context, api *model.Api) error {
+	err := r.db.WithContext(ctx).Create(api).Error
 	return errors.WithStack(err)
 }
 
-func (a *apiRepo) Delete(ctx context.Context, id int64) error {
-	err := a.db.WithContext(ctx).Delete(&model.Api{}, id).Error
+func (r *apiRepo) Delete(ctx context.Context, id int64) error {
+	err := r.db.WithContext(ctx).Delete(&model.Api{}, id).Error
 	return errors.WithStack(err)
 }
 
-func (a *apiRepo) Update(ctx context.Context, api *model.Api) error {
-	err := a.db.WithContext(ctx).Updates(api).Error
+func (r *apiRepo) Update(ctx context.Context, api *model.Api) error {
+	err := r.db.WithContext(ctx).Updates(api).Error
 	return errors.WithStack(err)
 }
 
-func (a *apiRepo) Find(ctx context.Context, id int64) (*model.Api, error) {
+func (r *apiRepo) Find(ctx context.Context, id int64) (*model.Api, error) {
 	var api model.Api
-	err := a.db.WithContext(ctx).First(&api, id).Error
+	err := r.db.WithContext(ctx).First(&api, id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -44,13 +44,13 @@ func (a *apiRepo) Find(ctx context.Context, id int64) (*model.Api, error) {
 	return &api, nil
 }
 
-func (a *apiRepo) List(ctx context.Context, req *request.ApiListReq) ([]*model.Api, int64, error) {
+func (r *apiRepo) List(ctx context.Context, req *request.ApiListReq) ([]*model.Api, int64, error) {
 	var (
 		apis  []*model.Api
 		total int64
 	)
 
-	db := a.db.WithContext(ctx).Model(&model.Api{})
+	db := r.db.WithContext(ctx).Model(&model.Api{})
 
 	if req.Path != "" {
 		db = db.Where("path LIKE ?", "%"+req.Path+"%")
@@ -63,9 +63,10 @@ func (a *apiRepo) List(ctx context.Context, req *request.ApiListReq) ([]*model.A
 		return nil, 0, errors.WithStack(err)
 	}
 
+	offset, limit := req.BuilderOffsetAndLimit()
 	if err := db.
-		Offset((req.Page - 1) * req.PageSize).
-		Limit(req.PageSize).
+		Offset(offset).
+		Limit(limit).
 		Order("created_at DESC").
 		Find(&apis).Error; err != nil {
 		return nil, 0, errors.WithStack(err)
@@ -74,7 +75,13 @@ func (a *apiRepo) List(ctx context.Context, req *request.ApiListReq) ([]*model.A
 	return apis, total, nil
 }
 
-func (a *apiRepo) BatchDelete(ctx context.Context, ids []int64) error {
-	err := a.db.WithContext(ctx).Where("id IN ?", ids).Delete(&model.Api{}).Error
+func (r *apiRepo) BatchDelete(ctx context.Context, ids []int64) error {
+	err := r.db.WithContext(ctx).Where("id IN ?", ids).Delete(&model.Api{}).Error
 	return errors.WithStack(err)
+}
+
+func (r *apiRepo) FindByIds(ctx context.Context, ids []int64) ([]*model.Api, error) {
+	var apis []*model.Api
+	err := r.db.WithContext(ctx).Where("id IN ?", ids).Find(&apis).Error
+	return apis, errors.WithStack(err)
 }

@@ -25,14 +25,14 @@ func (m *CasbinMiddleware) Handler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		roleKeysVal, ok := c.Get("userRoles")
 		if !ok {
-			response.Fail(c, xerror.ErrUnauthorized) // 没有角色信息
+			response.Fail(c, errorx.ErrUnauthorized) // 没有角色信息
 			c.Abort()
 			return
 		}
 
 		roleKeys, ok := roleKeysVal.([]string)
 		if !ok || len(roleKeys) == 0 {
-			response.Fail(c, xerror.ErrUnauthorized)
+			response.Fail(c, errorx.ErrUnauthorized)
 			c.Abort()
 			return
 		}
@@ -44,7 +44,7 @@ func (m *CasbinMiddleware) Handler() gin.HandlerFunc {
 		for _, role := range roleKeys {
 			ok, err := m.Enforce(role, obj, act)
 			if err != nil {
-				response.Fail(c, xerror.ErrInternal)
+				response.Fail(c, errorx.ErrInternal)
 				c.Abort()
 				return
 			}
@@ -55,7 +55,7 @@ func (m *CasbinMiddleware) Handler() gin.HandlerFunc {
 		}
 
 		// 所有角色都没有权限
-		response.Fail(c, xerror.ErrPermissionDenied)
+		response.Fail(c, errorx.ErrPermissionDenied)
 		c.Abort()
 	}
 }

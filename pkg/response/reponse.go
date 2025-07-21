@@ -31,14 +31,14 @@ func SuccessWithData[T any](c *gin.Context, data T) {
 }
 
 func Fail(c *gin.Context, err error) {
-	if bizErr, ok := err.(*xerror.BizError); ok {
+	if bizErr, ok := err.(*errorx.BizError); ok {
 		c.JSON(http.StatusOK, Response[any]{
 			Code:    bizErr.Code,
 			Message: bizErr.Message,
 		})
 	} else {
 		c.JSON(http.StatusOK, Response[any]{
-			Code:    xerror.ErrInternalServer.Code,
+			Code:    errorx.ErrInternalServer.Code,
 			Message: "系统异常：" + err.Error(),
 		})
 	}
