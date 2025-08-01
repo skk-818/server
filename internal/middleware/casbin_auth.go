@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"server/pkg/errorx"
 	"server/pkg/response"
-	"server/pkg/xerror"
 
 	"github.com/gin-gonic/gin"
 )

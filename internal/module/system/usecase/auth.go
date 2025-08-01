@@ -10,7 +10,7 @@ import (
 	"server/internal/module/system/model/request"
 	"server/internal/module/system/usecase/repo"
 	"server/pkg"
-	"server/pkg/xerror"
+	"server/pkg/errorx"
 	"time"
 )
 
@@ -38,7 +38,11 @@ func (u *AuthUsecase) Login(ctx context.Context, req *request.LoginReq) (*reply.
 	}
 	if user == nil {
 		u.logger.Error("[AuthUsecase] userRepo.FindByUsername user not find", zap.Any("req", req))
-		return nil, errorx.ErrUserNotFound
+		return nil, errorx.ErrUserDisabled
+	}
+	if user.Status != model.UserStatusEnable {
+		u.logger.Warn("[AuthUsecase] user not enable", zap.Any("req", req))
+		return nil, err
 	}
 
 	if !pkg.CheckPassword(user.Password, req.Password) {
@@ -49,8 +53,13 @@ func (u *AuthUsecase) Login(ctx context.Context, req *request.LoginReq) (*reply.
 	roleKeys := make([]string, 0)
 	if len(user.Roles) > 0 {
 		for i := range user.Roles {
-			roleKeys = append(roleKeys, user.Roles[i].Key)
+			if user.Roles[i].Status == model.RoleStatusEnable { // 添加状态开启的 role
+				roleKeys = append(roleKeys, user.Roles[i].Name)
+			}
 		}
+	}
+	if len(roleKeys) == 0 {
+		return nil, errorx.ErrUserNotRole
 	}
 
 	accessToken, err := u.jwtUsecase.GenerateAccessToken(uint(user.ID), user.Username, roleKeys)

@@ -1,12 +1,16 @@
 package usecase
 
 import (
+	"context"
 	"github.com/casbin/casbin/v2"
 	casbinModel "github.com/casbin/casbin/v2/model"
 	"github.com/casbin/gorm-adapter/v3"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"server/internal/core/logger"
+	"server/internal/module/system/model"
 	"server/internal/module/system/usecase/repo"
+	"server/pkg/errorx"
 	"sync"
 )
 
@@ -14,13 +18,15 @@ type (
 	CasbinUsecase struct {
 		logger   logger.Logger
 		enforcer *casbin.Enforcer
+		roleRepo repo.RoleRepo
 	}
 
 	casbinUsecase interface {
 		HasPolicy([]string) (bool, error)
 		AddPolicy([]string) (bool, error)
 		DeletePermissionsForRole(role string) error
-		AddPolicies(policies [][]string) (bool, error)
+		AddPolicies([][]string) (bool, error)
+		BatchAddPolicies([][]string) (bool, error)
 	}
 )
 
@@ -29,11 +35,11 @@ var (
 	enforcer *casbin.Enforcer
 )
 
-func NewCasbinUsecase(logger logger.Logger, repo repo.CasbinRepo) (*CasbinUsecase, error) {
+func NewCasbinUsecase(logger logger.Logger, casbinRepo repo.CasbinRepo, roleRepo repo.RoleRepo) (*CasbinUsecase, error) {
 	var err error
 	once.Do(func() {
 		logger.Info("开始初始化 Casbin Enforcer...")
-		db := repo.AdapterDB()
+		db := casbinRepo.AdapterDB()
 		adapter, e := gormadapter.NewAdapterByDB(db)
 		if e != nil {
 			logger.Error("初始化 Casbin Adapter 失败", zap.Any("error", e))
@@ -90,10 +96,23 @@ m = r.sub == p.sub && r.obj == p.obj && r.act == p.act
 	return &CasbinUsecase{
 		logger:   logger,
 		enforcer: enforcer,
+		roleRepo: roleRepo,
 	}, nil
 }
 
+// Enforce roleKey path method
 func (u *CasbinUsecase) Enforce(sub, obj, act string) (bool, error) {
+	role, err := u.roleRepo.FindByKey(context.Background(), model.RoleKeyAdmin)
+	if err != nil {
+		u.logger.Error("[ CasbinUsecase ] find role by key fail", zap.String("key", sub), zap.Any("error", err))
+		return false, err
+	}
+
+	if role.Status != model.RoleStatusEnable {
+		u.logger.Error("[ CasbinUsecase ] role not enable", zap.Any("role", role))
+		return false, errorx.ErrRoleIsDisabled
+	}
+
 	return u.enforcer.Enforce(sub, obj, act)
 }
 
@@ -103,6 +122,32 @@ func (u *CasbinUsecase) HasPolicy(policy []string) (bool, error) {
 
 func (u *CasbinUsecase) AddPolicy(policy []string) (bool, error) {
 	return u.enforcer.AddPolicy(policy)
+}
+
+func (u *CasbinUsecase) BatchAddPolicies(policies [][]string) (bool, error) {
+	// 判断 policies 是否为空
+	if len(policies) == 0 {
+		return false, nil
+	}
+
+	// 批量添加策略
+	added, err := u.enforcer.AddPolicies(policies)
+	if err != nil {
+		return false, err
+	}
+
+	// 如果 added 为 false，说明有部分策略已经存在，没有全部成功添加
+	if !added {
+		return false, errors.New("部分策略添加失败，可能已存在")
+	}
+
+	// 添加成功后持久化
+	err = u.enforcer.SavePolicy()
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (u *CasbinUsecase) DeletePermissionsForRole(role string) error {

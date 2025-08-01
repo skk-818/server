@@ -23,6 +23,7 @@ const (
 	InitNameUser       = "User"
 	InitNameMenu       = "Menu"
 	InitNameCasbin     = "Casbin"
+	InitNameApi        = "Api"
 )
 
 var InitCol = struct {

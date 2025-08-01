@@ -45,6 +45,8 @@ var (
 	ErrUserPasswordNotMatch  = New(200004, "密码错误")
 	ErrAuthGenerateTokenFail = New(200005, "生成 token 失败")
 	ErrUserIsSystem          = New(200006, "用户为系统内置用户")
+	ErrUserNotRole           = New(200007, "用户无可用角色")
+	ErrUserDisabled          = New(200008, "用户已禁用")
 )
 
 var (
@@ -52,8 +54,13 @@ var (
 	ErrAddPoliciesFail   = New(300002, "分配权限失败")
 	ErrRoleAlreadyExists = New(300003, "角色已存在")
 	ErrRoleIsSystem      = New(300004, "角色为系统内置角色")
+	ErrRoleIsDisabled    = New(300005, "角色已禁用")
 )
 
 var (
 	ErrApiNotFound = New(400001, "接口不存在")
+)
+
+var (
+	ErrPolicyIsExist = New(500001, "策略已经存在")
 )

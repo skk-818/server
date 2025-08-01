@@ -85,3 +85,8 @@ func (r *apiRepo) FindByIds(ctx context.Context, ids []int64) ([]*model.Api, err
 	err := r.db.WithContext(ctx).Where("id IN ?", ids).Find(&apis).Error
 	return apis, errors.WithStack(err)
 }
+
+func (r *apiRepo) BatchCreate(ctx context.Context, list []*model.Api) error {
+	err := r.db.WithContext(ctx).Create(&list).Error
+	return errors.WithStack(err)
+}

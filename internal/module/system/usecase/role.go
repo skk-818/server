@@ -106,6 +106,8 @@ func (u *RoleUsecase) Create(ctx context.Context, req *request.CreateRoleReq) er
 		return errorx.ErrInternal
 	}
 
+	// TODO 给角色分配访问动态菜单的权限
+
 	return nil
 }
 
