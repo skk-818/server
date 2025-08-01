@@ -12,8 +12,10 @@ import (
 	"time"
 )
 
+const configFile = "./etc/config.yaml"
+
 func main() {
-	app, err := di.InitApp()
+	app, err := di.InitApp(configFile)
 	if err != nil {
 		log.Fatalf("init error: %v", err)
 	}

@@ -13,13 +13,11 @@ type Config struct {
 	Redis  *Redis      `mapstructure:"redis" json:"redis" yaml:"redis"`
 }
 
-const FilePath = "./etc/config.yaml" // 配置文件路径常量
-
-func LoadConfig() (*Config, error) {
+func LoadConfig(path string) (*Config, error) {
 	v := viper.New()
 
 	// 直接指定配置文件路径和名称
-	v.SetConfigFile(FilePath) // 这里用常量
+	v.SetConfigFile(path) // 这里用常量
 
 	if err := v.ReadInConfig(); err != nil {
 		return nil, fmt.Errorf("read config file error: %w", err)

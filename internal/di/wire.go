@@ -15,7 +15,7 @@ import (
 	"server/internal/router"
 )
 
-func InitApp() (*server.HTTPServer, error) {
+func InitApp(path string) (*server.HTTPServer, error) {
 	wire.Build(
 		core.ProviderSet,
 		router.ProviderSet,

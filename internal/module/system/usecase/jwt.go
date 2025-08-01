@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"server/internal/core/config"
-	"server/pkg/jwt"
+	"server/pkg/jwtx"
 )
 
 type (
