@@ -14,5 +14,5 @@ type CreateUserReq struct {
 }
 
 type DeleteUserReq struct {
-	Ids []int64 `json:"ids" validate:"required,gt=0"`
+	Ids []int64 `json:"ids" validate:"required,gt=1"`
 }

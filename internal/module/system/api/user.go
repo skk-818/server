@@ -36,7 +36,7 @@ func (a *UserApi) Info(c *gin.Context) {
 		return
 	}
 
-	userInfo, err := a.userUsecase.GetInfo(c, int(userId))
+	userInfo, err := a.userUsecase.Detail(c, int(userId))
 	if err != nil {
 		a.logger.Error("[UserApi] GetUserInfo error", zap.Any("userId", userId), zap.Error(err))
 		response.Fail(c, err)

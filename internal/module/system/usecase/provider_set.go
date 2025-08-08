@@ -16,7 +16,6 @@ var ProviderSet = wire.NewSet(
 	NewCronUsecase,
 
 	NewUserUsecase,
-	NewAuthUsecase,
 	NewRoleUsecase,
 	NewApiUsecase,
 	NewMenuUsecase,

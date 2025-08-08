@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-type GetUserInfoReply struct {
+type UserDetailReply struct {
 	ID          int64    `json:"id"`
 	Username    string   `json:"username"`
 	Nickname    string   `json:"nickname"`
@@ -30,13 +30,13 @@ type GetUserInfoReply struct {
 	Roles []string `json:"roles"`
 }
 
-func BuilderGetUserInfoReply(user *model.User) *GetUserInfoReply {
+func BuilderUserDetailReply(user *model.User) *UserDetailReply {
 	roles := make([]string, 0, len(user.Roles))
 	for _, r := range user.Roles {
 		roles = append(roles, r.Key)
 	}
 
-	return &GetUserInfoReply{
+	return &UserDetailReply{
 		ID:          int64(user.ID),
 		Username:    user.Username,
 		Nickname:    user.Nickname,

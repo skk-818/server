@@ -30,11 +30,37 @@ func (u *ApiUsecase) Create(ctx context.Context, params *request.CreateApiReq) e
 }
 
 func (u *ApiUsecase) Delete(ctx context.Context, params *request.DeleteApiReq) error {
-	return nil
+	api, err := u.apiRepo.Find(ctx, params.Id)
+	if err != nil {
+		u.logger.Error("[ApiUsecase] apiRepo.Find error", zap.Error(err))
+		return err
+	}
+	if api == nil {
+		u.logger.Error("[ApiUsecase] api not found", zap.Error(err))
+		return errorx.ErrApiNotFound
+	}
+	return u.apiRepo.Delete(ctx, params.Id)
 }
 
 func (u *ApiUsecase) Update(ctx context.Context, params *request.UpdateApiReq) error {
-	return nil
+	api, err := u.apiRepo.Find(ctx, params.Id)
+	if err != nil {
+		u.logger.Error("[ApiUsecase] apiRepo.Find error", zap.Error(err))
+		return err
+	}
+	if api == nil {
+		u.logger.Error("[ApiUsecase] api not found", zap.Error(err))
+		return errorx.ErrApiNotFound
+	}
+
+	api.Name = params.Name
+	api.Path = params.Path
+	api.Method = params.Method
+	api.Status = *params.Status
+	api.Group = params.Group
+	api.Description = params.Description
+
+	return u.apiRepo.Update(ctx, api)
 }
 
 func (u *ApiUsecase) Detail(ctx context.Context, params *request.ApiDetailReq) (*reply.ApiDetailReply, error) {
@@ -48,19 +74,7 @@ func (u *ApiUsecase) Detail(ctx context.Context, params *request.ApiDetailReq) (
 		return nil, errorx.ErrApiNotFound
 	}
 
-	apiReply := &reply.ApiDetailReply{
-		Id:          int64(api.ID),
-		Name:        api.Name,
-		Path:        api.Path,
-		Method:      api.Method,
-		Description: api.Description,
-		Group:       api.Group,
-		Status:      api.Status,
-		CreatedAt:   api.CreatedAt,
-		UpdatedAt:   api.UpdatedAt,
-	}
-
-	return apiReply, nil
+	return reply.BuilderApiDetailReply(api), nil
 }
 
 func (u *ApiUsecase) List(ctx context.Context, params *request.ApiListReq) (*reply.ApiListReply, error) {
