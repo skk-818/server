@@ -53,10 +53,10 @@ func (r *apiRepo) List(ctx context.Context, req *request.ApiListReq) ([]*model.A
 	db := r.db.WithContext(ctx).Model(&model.Api{})
 
 	if req.Path != "" {
-		db = db.Where("path LIKE ?", "%"+req.Path+"%")
+		db = db.Where(model.ApiCol.Path+" LIKE ?", "%"+req.Path+"%")
 	}
 	if req.Method != "" {
-		db = db.Where("method = ?", req.Method)
+		db = db.Where(model.ApiCol.Method+" = ?", req.Method)
 	}
 
 	if err := db.Count(&total).Error; err != nil {
@@ -67,7 +67,7 @@ func (r *apiRepo) List(ctx context.Context, req *request.ApiListReq) ([]*model.A
 	if err := db.
 		Offset(offset).
 		Limit(limit).
-		Order("created_at DESC").
+		Order(model.ApiCol.CreatedAt + " DESC").
 		Find(&apis).Error; err != nil {
 		return nil, 0, errors.WithStack(err)
 	}
@@ -76,13 +76,13 @@ func (r *apiRepo) List(ctx context.Context, req *request.ApiListReq) ([]*model.A
 }
 
 func (r *apiRepo) BatchDelete(ctx context.Context, ids []int64) error {
-	err := r.db.WithContext(ctx).Where("id IN ?", ids).Delete(&model.Api{}).Error
+	err := r.db.WithContext(ctx).Where(model.ApiCol.ID+" IN ?", ids).Delete(&model.Api{}).Error
 	return errors.WithStack(err)
 }
 
 func (r *apiRepo) FindByIds(ctx context.Context, ids []int64) ([]*model.Api, error) {
 	var apis []*model.Api
-	err := r.db.WithContext(ctx).Where("id IN ?", ids).Find(&apis).Error
+	err := r.db.WithContext(ctx).Where(model.ApiCol.ID+" IN ?", ids).Find(&apis).Error
 	return apis, errors.WithStack(err)
 }
 

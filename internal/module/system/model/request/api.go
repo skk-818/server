@@ -14,7 +14,8 @@ type DeleteApiReq struct {
 type UpdateApiReq struct {
 }
 
-type GetApiReq struct {
+type ApiDetailReq struct {
+	Id int64 `json:"id" validate:"required,min=1"`
 }
 
 type ApiListReq struct {

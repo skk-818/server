@@ -3,7 +3,7 @@ package response
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"server/pkg/xerror"
+	"server/pkg/errorx"
 )
 
 type Response[T any] struct {
