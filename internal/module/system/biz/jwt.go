@@ -1,4 +1,4 @@
-package usecase
+package biz
 
 import (
 	"server/internal/core/config"

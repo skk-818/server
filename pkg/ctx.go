@@ -1,8 +1,9 @@
 package pkg
 
 import (
+	"server/pkg/jwtx"
+
 	"github.com/gin-gonic/gin"
-	"server/pkg/jwt"
 )
 
 func GetClaims(c *gin.Context) *jwtx.CustomClaims {

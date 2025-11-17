@@ -5,8 +5,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/schema"
+	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
-	"server/internal/module/system/usecase/repo"
 )
 
 type initRepo struct {

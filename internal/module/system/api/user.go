@@ -1,23 +1,24 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 	"server/internal/core/config"
 	"server/internal/core/logger"
-	"server/internal/module/system/usecase"
+	"server/internal/module/system/biz"
 	"server/pkg"
 	"server/pkg/errorx"
 	"server/pkg/response"
+
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type UserApi struct {
 	config      *config.Config
 	logger      logger.Logger
-	userUsecase *usecase.UserUsecase
+	userUsecase *biz.UserUsecase
 }
 
-func NewUserApi(config *config.Config, logger logger.Logger, userUsecase *usecase.UserUsecase) *UserApi {
+func NewUserApi(config *config.Config, logger logger.Logger, userUsecase *biz.UserUsecase) *UserApi {
 	return &UserApi{
 		config:      config,
 		logger:      logger,

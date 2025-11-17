@@ -3,15 +3,15 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"server/internal/core/logger"
-	"server/internal/module/system/usecase"
+	"server/internal/module/system/biz"
 )
 
 type ApiApi struct {
 	logger     logger.Logger
-	apiUsecase *usecase.ApiUsecase
+	apiUsecase *biz.ApiUsecase
 }
 
-func NewApiApi(logger logger.Logger, apiUsecase *usecase.ApiUsecase) *ApiApi {
+func NewApiApi(logger logger.Logger, apiUsecase *biz.ApiUsecase) *ApiApi {
 	return &ApiApi{
 		logger:     logger,
 		apiUsecase: apiUsecase,

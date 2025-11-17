@@ -1,15 +1,16 @@
-package usecase
+package biz
 
 import (
 	"context"
-	"go.uber.org/zap"
-	"gorm.io/gorm/schema"
 	"server/internal/core/logger"
+	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
-	"server/internal/module/system/usecase/repo"
 	"server/pkg"
 	"server/pkg/errorx"
 	"strings"
+
+	"go.uber.org/zap"
+	"gorm.io/gorm/schema"
 )
 
 type InitUsecase struct {
@@ -44,6 +45,8 @@ func (u *InitUsecase) InitIfNeeded() error {
 		&model.Init{},
 		&model.Role{},
 		&model.User{},
+		&model.Menu{},
+		&model.Api{},
 	}); err != nil {
 		u.logger.Error("[InitUsecase] failed to initialize database table structure", zap.Any("err", err))
 		return err
@@ -74,7 +77,7 @@ func (u *InitUsecase) InitIfNeeded() error {
 	u.logger.Info("[InitUsecase] menu initialized")
 
 	if !u.ApiIsInitialized() {
-		if err := u.MenuInitialize(); err != nil {
+		if err := u.ApiInitialize(); err != nil {
 			u.logger.Error("[InitUsecase] system initialize api fail", zap.Any("err", err))
 			return err
 		}
@@ -210,6 +213,11 @@ func (u *InitUsecase) UserInitialize() error {
 // MenuInitialize 初始化 menu，用作权限
 func (u *InitUsecase) MenuInitialize() error {
 	// TODO MENU初始化
+
+	if err := u.initRepo.SetInitialized(model.InitNameMenu, "v1.0.0", "初始化菜单"); err != nil {
+		u.logger.Error("[InitUsecase] save menu initialized flag fail", zap.Any("err", err))
+		return err
+	}
 	return nil
 }
 

@@ -1,19 +1,20 @@
-package usecase
+package biz
 
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
 	"math/rand"
 	"server/internal/core/logger"
+	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
 	"server/internal/module/system/model/reply"
 	"server/internal/module/system/model/request"
-	"server/internal/module/system/usecase/repo"
 	"server/pkg"
 	"server/pkg/errorx"
 	"strings"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 type UserUsecase struct {
@@ -148,6 +149,6 @@ func (u *UserUsecase) Delete(ctx context.Context, req *request.DeleteUserReq) er
 		u.logger.Error("[UserUsecase] userRepo.Delete err", zap.Any("req", req), zap.Error(err))
 		return err
 	}
-	
+
 	return nil
 }

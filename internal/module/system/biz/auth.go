@@ -1,17 +1,18 @@
-package usecase
+package biz
 
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
 	"server/internal/core/logger"
+	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
 	"server/internal/module/system/model/reply"
 	"server/internal/module/system/model/request"
-	"server/internal/module/system/usecase/repo"
 	"server/pkg"
 	"server/pkg/errorx"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 type AuthUsecase struct {

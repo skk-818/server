@@ -3,7 +3,7 @@ package jwtx
 import (
 	"errors"
 	"github.com/golang-jwt/jwt/v5"
-	"server/pkg/xerror"
+	"server/pkg/errorx"
 	"time"
 )
 

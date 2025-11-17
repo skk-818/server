@@ -1,8 +1,8 @@
-package usecase
+package biz
 
 import (
 	"server/internal/core/logger"
-	"server/internal/module/system/usecase/repo"
+	"server/internal/module/system/biz/repo"
 )
 
 type MenuUsecase struct {

@@ -1,4 +1,4 @@
-package usecase
+package biz
 
 type CronUsecase struct {
 }

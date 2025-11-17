@@ -1,21 +1,22 @@
 package api
 
 import (
+	"server/internal/core/logger"
+	"server/internal/module/system/biz"
+	"server/internal/module/system/model/request"
+	"server/pkg/errorx"
+	"server/pkg/response"
+
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"server/internal/core/logger"
-	"server/internal/module/system/model/request"
-	"server/internal/module/system/usecase"
-	"server/pkg/response"
-	"server/pkg/xerror"
 )
 
 type AuthApi struct {
 	logger      logger.Logger
-	authUsecase *usecase.AuthUsecase
+	authUsecase *biz.AuthUsecase
 }
 
-func NewAuthApi(logger logger.Logger, authUsecase *usecase.AuthUsecase) *AuthApi {
+func NewAuthApi(logger logger.Logger, authUsecase *biz.AuthUsecase) *AuthApi {
 	return &AuthApi{
 		logger:      logger,
 		authUsecase: authUsecase,

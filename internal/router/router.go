@@ -1,11 +1,12 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
 	"server/internal/core/config"
 	"server/internal/core/logger"
 	"server/internal/middleware"
 	"server/internal/module/system/api"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Group struct {

@@ -22,7 +22,10 @@ type Menu struct {
 	TextBadge  string `gorm:"size:64;default:''" json:"textBadge"`   // 显示文本徽章
 	ActivePath string `gorm:"size:255;default:''" json:"activePath"` // 激活的路径
 	Sort       int64  `gorm:"not null;default:0" json:"sort"`        // 排序字段
+}
 
+func (m *Menu) TableName() string {
+	return "sys_menu"
 }
 
 var MenuCol = struct {

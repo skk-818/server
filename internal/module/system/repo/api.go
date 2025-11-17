@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
 	"server/internal/module/system/model/request"
-	"server/internal/module/system/usecase/repo"
 )
 
 type apiRepo struct {

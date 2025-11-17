@@ -1,14 +1,15 @@
 package core
 
 import (
-	"github.com/google/wire"
 	"server/internal/core/config"
 	"server/internal/core/logger"
 	"server/internal/core/mysql"
 	"server/internal/core/redis"
 	"server/internal/core/router"
 	"server/internal/core/server"
-	"server/internal/module/system/usecase"
+	"server/internal/module/system/biz"
+
+	"github.com/google/wire"
 )
 
 var ProviderSet = wire.NewSet(
@@ -34,7 +35,7 @@ var ProviderSet = wire.NewSet(
 )
 
 // NewInitManagerProvider 初始化管理器
-func NewInitManagerProvider(router *router.Router, initUsecase *usecase.InitUsecase, cronUsecase *usecase.CronUsecase) []server.InitManager {
+func NewInitManagerProvider(router *router.Router, initUsecase *biz.InitUsecase, cronUsecase *biz.CronUsecase) []server.InitManager {
 	return []server.InitManager{
 		router,
 		initUsecase,

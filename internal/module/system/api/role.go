@@ -1,17 +1,18 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	"server/internal/core/logger"
-	"server/internal/module/system/usecase"
+	"server/internal/module/system/biz"
+
+	"github.com/gin-gonic/gin"
 )
 
 type RoleApi struct {
 	logger      logger.Logger
-	roleUsecase *usecase.RoleUsecase
+	roleUsecase *biz.RoleUsecase
 }
 
-func NewRoleApi(logger logger.Logger, roleUsecase *usecase.RoleUsecase) *RoleApi {
+func NewRoleApi(logger logger.Logger, roleUsecase *biz.RoleUsecase) *RoleApi {
 	return &RoleApi{
 		logger:      logger,
 		roleUsecase: roleUsecase,

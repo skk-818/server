@@ -1,17 +1,18 @@
-package usecase
+package biz
 
 import (
 	"context"
+	"server/internal/core/logger"
+	"server/internal/module/system/biz/repo"
+	"server/internal/module/system/model"
+	"server/pkg/errorx"
+	"sync"
+
 	"github.com/casbin/casbin/v2"
 	casbinModel "github.com/casbin/casbin/v2/model"
 	"github.com/casbin/gorm-adapter/v3"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
-	"server/internal/core/logger"
-	"server/internal/module/system/model"
-	"server/internal/module/system/usecase/repo"
-	"server/pkg/errorx"
-	"sync"
 )
 
 type (

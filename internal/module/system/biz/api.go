@@ -1,11 +1,11 @@
-package usecase
+package biz
 
 import (
 	"context"
 	"server/internal/core/logger"
+	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model/reply"
 	"server/internal/module/system/model/request"
-	"server/internal/module/system/usecase/repo"
 )
 
 type ApiUsecase struct {

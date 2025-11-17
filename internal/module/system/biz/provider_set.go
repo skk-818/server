@@ -1,8 +1,9 @@
-package usecase
+package biz
 
 import (
-	"github.com/google/wire"
 	"server/internal/middleware"
+
+	"github.com/google/wire"
 )
 
 var ProviderSet = wire.NewSet(

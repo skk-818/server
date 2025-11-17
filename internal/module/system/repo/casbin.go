@@ -1,8 +1,9 @@
 package repo
 
 import (
+	"server/internal/module/system/biz/repo"
+
 	"gorm.io/gorm"
-	"server/internal/module/system/usecase/repo"
 )
 
 type casbinRepo struct {

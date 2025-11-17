@@ -6,9 +6,11 @@ import (
 	"path/filepath"
 	"server/internal/core/config"
 	"strings"
+	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 type ZapLogger struct {
@@ -32,7 +34,7 @@ func NewZapLogger(cfg *config.Logger) (*ZapLogger, error) {
 	jsonEncoder := getEncoder(cfg, false)
 	for _, level := range []zapcore.Level{zapcore.DebugLevel, zapcore.InfoLevel, zapcore.WarnLevel, zapcore.ErrorLevel} {
 		if baseLevel <= level {
-			ws := getFileWriter(cfg.Director, level.String())
+			ws := getFileWriter(cfg, level.String())
 			core := zapcore.NewCore(jsonEncoder, ws, zap.NewAtomicLevelAt(level))
 			cores = append(cores, core)
 		}
@@ -111,11 +113,30 @@ func getEncoder(cfg *config.Logger, forConsole bool) zapcore.Encoder {
 	return zapcore.NewJSONEncoder(encCfg)
 }
 
-func getFileWriter(dir, level string) zapcore.WriteSyncer {
-	file := filepath.Join(dir, fmt.Sprintf("%s.log", level))
-	writer, err := os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
+func getFileWriter(cfg *config.Logger, level string) zapcore.WriteSyncer {
+	dateDir := filepath.Join(cfg.Director, time.Now().Format("2006-01-02"))
+	if err := os.MkdirAll(dateDir, os.ModePerm); err != nil {
 		panic(err)
 	}
-	return zapcore.AddSync(writer)
+
+	maxSize := cfg.MaxSize
+	if maxSize <= 0 {
+		maxSize = 100
+	}
+	maxBackups := cfg.MaxBackups
+	if maxBackups <= 0 {
+		maxBackups = 30
+	}
+	maxAge := cfg.MaxAge
+	if maxAge <= 0 {
+		maxAge = 30
+	}
+
+	return zapcore.AddSync(&lumberjack.Logger{
+		Filename:   filepath.Join(dateDir, fmt.Sprintf("%s.log", level)),
+		MaxSize:    maxSize,
+		MaxBackups: maxBackups,
+		MaxAge:     maxAge,
+		Compress:   cfg.Compress,
+	})
 }
