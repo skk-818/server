@@ -2,11 +2,12 @@ package repo
 
 import (
 	"context"
-	"github.com/pkg/errors"
-	"gorm.io/gorm"
 	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
 	"server/internal/module/system/model/request"
+
+	"github.com/pkg/errors"
+	"gorm.io/gorm"
 )
 
 type menuRepo struct {
@@ -72,4 +73,22 @@ func (m *menuRepo) List(ctx context.Context, req *request.MenuListReq) ([]*model
 func (m *menuRepo) BatchDelete(ctx context.Context, ids []int64) error {
 	err := m.db.WithContext(ctx).Where("id IN ?", ids).Delete(&model.Menu{}).Error
 	return errors.WithStack(err)
+}
+
+func (m *menuRepo) GetAllEnabled(ctx context.Context) ([]*model.Menu, error) {
+	var menus []*model.Menu
+	err := m.db.WithContext(ctx).Where("status = ?", 1).Order("sort ASC").Find(&menus).Error
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return menus, nil
+}
+
+func (m *menuRepo) GetAll(ctx context.Context) ([]*model.Menu, error) {
+	var menus []*model.Menu
+	err := m.db.WithContext(ctx).Order("sort ASC").Find(&menus).Error
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return menus, nil
 }

@@ -1,9 +1,10 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	"server/internal/core/logger"
 	"server/internal/module/system/biz"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ApiApi struct {

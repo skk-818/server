@@ -11,6 +11,7 @@ type Menu struct {
 	Icon      string `gorm:"size:128;default:''" json:"icon"`               // 图标
 	Redirect  string `gorm:"size:255;default:''" json:"redirect"`           // 重定向路径
 	Link      string `gorm:"size:255;default:''" json:"link"`               // iframe 或外链地址
+	Roles     string `gorm:"type:text" json:"roles"`                        // 角色权限，逗号分隔
 
 	IsIframe   int64  `gorm:"not null;default:0" json:"isIframe"`    // 是否 iframe 链接
 	Hidden     int64  `gorm:"not null;default:0" json:"hidden"`      // 是否隐藏菜单
@@ -22,6 +23,7 @@ type Menu struct {
 	TextBadge  string `gorm:"size:64;default:''" json:"textBadge"`   // 显示文本徽章
 	ActivePath string `gorm:"size:255;default:''" json:"activePath"` // 激活的路径
 	Sort       int64  `gorm:"not null;default:0" json:"sort"`        // 排序字段
+	Status     int64  `gorm:"not null;default:1" json:"status"`      // 状态：1启用 0禁用
 }
 
 func (m *Menu) TableName() string {
@@ -40,6 +42,7 @@ var MenuCol = struct {
 	Icon       string
 	Redirect   string
 	Link       string
+	Roles      string
 	IsIframe   string
 	Hidden     string
 	HideTab    string
@@ -50,6 +53,7 @@ var MenuCol = struct {
 	TextBadge  string
 	ActivePath string
 	Sort       string
+	Status     string
 }{
 	ID:         "id",
 	CreatedAt:  "created_at",
@@ -62,6 +66,7 @@ var MenuCol = struct {
 	Icon:       "icon",
 	Redirect:   "redirect",
 	Link:       "link",
+	Roles:      "roles",
 	IsIframe:   "is_iframe",
 	Hidden:     "hidden",
 	HideTab:    "hide_tab",
@@ -72,4 +77,5 @@ var MenuCol = struct {
 	TextBadge:  "text_badge",
 	ActivePath: "active_path",
 	Sort:       "sort",
+	Status:     "status",
 }

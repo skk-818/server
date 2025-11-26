@@ -26,6 +26,7 @@ func NewAuthApi(logger logger.Logger, authUsecase *biz.AuthUsecase) *AuthApi {
 func (a *AuthApi) InitAuthApi(router *gin.RouterGroup) {
 	router.POST("login", a.Login)
 	router.POST("register", a.Register)
+	router.POST("emailLogin", a.EmailLogin)
 }
 
 func (a *AuthApi) Login(c *gin.Context) {
@@ -36,7 +37,7 @@ func (a *AuthApi) Login(c *gin.Context) {
 		return
 	}
 
-	reply, err := a.authUsecase.Login(c, &req)
+	reply, err := a.authUsecase.Login(c, &req, c.ClientIP())
 	if err != nil {
 		a.logger.Error("[AuthApi] Login error", zap.Any("req", req), zap.Error(err))
 		response.Fail(c, err)
@@ -59,4 +60,19 @@ func (a *AuthApi) Register(c *gin.Context) {
 		return
 	}
 	response.Success(c)
+}
+
+func (a *AuthApi) EmailLogin(c *gin.Context) {
+	var req request.EmailLoginReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.Fail(c, errorx.ErrInvalidParam)
+		return
+	}
+
+	reply, err := a.authUsecase.EmailLogin(c, &req, c.ClientIP())
+	if err != nil {
+		response.Fail(c, err)
+		return
+	}
+	response.SuccessWithData(c, reply)
 }

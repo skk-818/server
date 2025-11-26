@@ -5,6 +5,7 @@ import (
 	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
 	"server/internal/module/system/model/request"
+	"time"
 
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -140,4 +141,32 @@ func (r *userRepo) FindByIds(ctx context.Context, ids []int64) ([]*model.User, e
 		return nil, errors.WithStack(err)
 	}
 	return users, nil
+}
+
+func (r *userRepo) FindByEmail(ctx context.Context, email string) (*model.User, error) {
+	var user model.User
+	err := r.db.WithContext(ctx).
+		Preload(model.UserCol.Roles).
+		Where(model.UserCol.Email+" = ?", email).
+		First(&user).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, errors.WithStack(err)
+	}
+	return &user, nil
+}
+
+func (r *userRepo) UpdateLastLogin(ctx context.Context, userID uint, ip string) error {
+	now := time.Now()
+	err := r.db.WithContext(ctx).
+		Model(&model.User{}).
+		Where("id = ?", userID).
+		Updates(map[string]interface{}{
+			"last_login_at": now,
+			"last_login_ip": ip,
+		}).Error
+	return errors.WithStack(err)
 }

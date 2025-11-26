@@ -45,22 +45,22 @@ func (r *SystemApi) InitSystemApi(router *gin.RouterGroup) {
 	privateRouter.Use(r.jwtMiddleware.Handler(), r.casbinMiddleware.Handler())
 
 	{
-		userRouter := router.Group("user")
+		userRouter := privateRouter.Group("user")
 		r.userApi.InitUserApi(userRouter)
 	}
 
 	{
-		roleRouter := router.Group("role")
+		roleRouter := privateRouter.Group("role")
 		r.roleApi.InitRoleApi(roleRouter)
 	}
 
 	{
-		apiRouter := router.Group("api")
+		apiRouter := privateRouter.Group("api")
 		r.apiApi.InitApiApi(apiRouter)
 	}
 
 	{
-		menuRouter := router.Group("menu")
+		menuRouter := privateRouter.Group("menu")
 		r.menuApi.InitMenuApi(menuRouter)
 	}
 }

@@ -55,6 +55,7 @@ var (
 	ErrRoleAlreadyExists = New(300003, "角色已存在")
 	ErrRoleIsSystem      = New(300004, "角色为系统内置角色")
 	ErrRoleIsDisabled    = New(300005, "角色已禁用")
+	ErrAdminRoleNotFound = New(300006, "管理员角色不存在")
 )
 
 var (

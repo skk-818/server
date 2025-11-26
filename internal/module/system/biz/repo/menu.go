@@ -13,4 +13,6 @@ type MenuRepo interface {
 	Find(context.Context, int64) (*model.Menu, error)
 	List(context.Context, *request.MenuListReq) ([]*model.Menu, int64, error)
 	BatchDelete(context.Context, []int64) error
+	GetAllEnabled(context.Context) ([]*model.Menu, error)
+	GetAll(context.Context) ([]*model.Menu, error)
 }
