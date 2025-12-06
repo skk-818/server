@@ -86,7 +86,7 @@ func (m *menuRepo) GetAllEnabled(ctx context.Context) ([]*model.Menu, error) {
 
 func (m *menuRepo) GetAll(ctx context.Context) ([]*model.Menu, error) {
 	var menus []*model.Menu
-	err := m.db.WithContext(ctx).Order("sort ASC").Find(&menus).Error
+	err := m.db.WithContext(ctx).Order("id ASC").Find(&menus).Error
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

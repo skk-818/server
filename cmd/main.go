@@ -14,6 +14,25 @@ import (
 
 const configFile = "./etc/config.yaml"
 
+// @title 系统管理API
+// @version 1.0
+// @description 系统管理后台API接口文档
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.email support@example.com
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:9999
+// @BasePath /
+
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
+
 func main() {
 	app, err := di.InitApp(configFile)
 	if err != nil {

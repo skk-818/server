@@ -5,6 +5,7 @@ import (
 	"server/internal/core/logger"
 	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
+	"server/internal/module/system/model/reply"
 	"server/internal/module/system/model/response"
 	"strings"
 )
@@ -41,12 +42,12 @@ func (u *MenuUsecase) Delete(ctx context.Context, id int64) error {
 	return u.menuRepo.Delete(ctx, id)
 }
 
-func (u *MenuUsecase) List(ctx context.Context, req *model.Menu) ([]*model.Menu, error) {
+func (u *MenuUsecase) List(ctx context.Context, req *model.Menu) (*reply.ListMenuReply, error) {
 	menus, err := u.menuRepo.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return menus, nil
+	return reply.BuilderListMenuReply(menus), nil
 }
 
 func (u *MenuUsecase) buildMenuTree(menus []*model.Menu, parentID uint64) []*response.MenuTreeResp {
@@ -60,17 +61,18 @@ func (u *MenuUsecase) buildMenuTree(menus []*model.Menu, parentID uint64) []*res
 				Component: menu.Component,
 				Redirect:  menu.Redirect,
 				Meta: response.MenuMeta{
-					Title:      menu.Title,
-					Icon:       menu.Icon,
-					IsHide:     menu.Hidden == 1,
-					IsHideTab:  menu.HideTab == 1,
-					Link:       menu.Link,
-					IsIframe:   menu.IsIframe == 1,
-					KeepAlive:  menu.KeepAlive == 1,
-					FixedTab:   menu.FixedTab == 1,
-					ShowBadge:  menu.ShowBadge == 1,
-					ActivePath: menu.ActivePath,
-					IsFullPage: menu.FullPage == 1,
+					Title:         menu.Title,
+					Icon:          menu.Icon,
+					IsHide:        menu.Hidden == 1,
+					IsHideTab:     menu.HideTab == 1,
+					Link:          menu.Link,
+					IsIframe:      menu.IsIframe == 1,
+					KeepAlive:     menu.KeepAlive == 1,
+					FixedTab:      menu.FixedTab == 1,
+					ShowBadge:     menu.ShowBadge == 1,
+					ShowTextBadge: menu.TextBadge,
+					ActivePath:    menu.ActivePath,
+					IsFullPage:    menu.FullPage == 1,
 				},
 			}
 			if menu.Roles != "" {

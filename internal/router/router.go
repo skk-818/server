@@ -7,6 +7,10 @@ import (
 	"server/internal/module/system/api"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "server/docs"
 )
 
 type Group struct {
@@ -34,6 +38,8 @@ func (a *Group) InitRouter(engine *gin.Engine) error {
 	if a.cfg.Cors.Enabled {
 		engine.Use(a.cors.Handler())
 	}
+
+	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	{
 		systemRouter := engine.Group("api/system")

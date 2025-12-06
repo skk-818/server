@@ -2,7 +2,7 @@ package request
 
 type RoleListReq struct {
 	PageInfo
-	Name string `json:"name"`
+	Name string `json:"name" form:"name"`
 }
 
 type CreateRoleReq struct {

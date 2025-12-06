@@ -66,7 +66,7 @@ func (r *roleRepo) List(ctx context.Context, req *request.RoleListReq) ([]*model
 	}
 
 	offset, limit := req.BuilderOffsetAndLimit()
-	err = db.Order(model.RoleCol.Sort + " ASC").
+	err = db.Order("id DESC").
 		Limit(limit).
 		Offset(offset).
 		Find(&roles).Error

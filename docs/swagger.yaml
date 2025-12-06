@@ -1,0 +1,985 @@
+basePath: /
+definitions:
+  server_internal_module_system_model.Menu:
+    properties:
+      activePath:
+        description: 激活的路径
+        type: string
+      component:
+        description: 对应前端组件路径
+        type: string
+      createdAt:
+        type: string
+      fixedTab:
+        description: 是否固定标签页
+        type: integer
+      fullPage:
+        description: 是否全屏显示
+        type: integer
+      hidden:
+        description: 是否隐藏菜单
+        type: integer
+      hideTab:
+        description: 是否隐藏标签页
+        type: integer
+      icon:
+        description: 图标
+        type: string
+      id:
+        type: integer
+      isIframe:
+        description: 是否 iframe 链接
+        type: integer
+      keepAlive:
+        description: 是否缓存
+        type: integer
+      link:
+        description: iframe 或外链地址
+        type: string
+      name:
+        description: 路由名称（唯一标识）
+        type: string
+      parentId:
+        description: 父菜单 ID，顶级菜单为 0
+        type: integer
+      path:
+        description: 路由路径
+        type: string
+      redirect:
+        description: 重定向路径
+        type: string
+      roles:
+        description: 角色权限，逗号分隔
+        type: string
+      showBadge:
+        description: 是否展示小圆点
+        type: integer
+      sort:
+        description: 排序字段
+        type: integer
+      status:
+        description: 状态：1启用 0禁用
+        type: integer
+      textBadge:
+        description: 显示文本徽章
+        type: string
+      title:
+        description: 菜单标题
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  server_internal_module_system_model.Role:
+    properties:
+      createdAt:
+        type: string
+      dataScope:
+        type: string
+      id:
+        type: integer
+      isSystem:
+        type: integer
+      key:
+        type: string
+      name:
+        type: string
+      remark:
+        type: string
+      sort:
+        type: integer
+      status:
+        type: integer
+      updatedAt:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/server_internal_module_system_model.User'
+        type: array
+    type: object
+  server_internal_module_system_model.User:
+    properties:
+      address:
+        type: string
+      avatar:
+        type: string
+      city:
+        type: string
+      createdAt:
+        type: string
+      department:
+        type: string
+      district:
+        type: string
+      email:
+        type: string
+      gender:
+        type: integer
+      id:
+        type: integer
+      isAdmin:
+        type: integer
+      jobTitle:
+        type: string
+      lastLoginAt:
+        type: string
+      lastLoginIP:
+        type: string
+      nickname:
+        type: string
+      phone:
+        type: string
+      position:
+        description: "\U0001F4BC 职业信息"
+        type: string
+      province:
+        description: "\U0001F4CD 地理信息"
+        type: string
+      roles:
+        items:
+          $ref: '#/definitions/server_internal_module_system_model.Role'
+        type: array
+      status:
+        type: integer
+      tags:
+        description: "\U0001F3F7️ 标签信息"
+        type: string
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
+  server_internal_module_system_model_reply.ApiReply:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      group:
+        type: string
+      id:
+        type: integer
+      method:
+        type: string
+      name:
+        type: string
+      path:
+        type: string
+      status:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  server_internal_module_system_model_reply.GetUserInfoReply:
+    properties:
+      address:
+        type: string
+      avatar:
+        type: string
+      city:
+        type: string
+      createdAt:
+        description: 注册时间
+        type: string
+      department:
+        type: string
+      district:
+        type: string
+      email:
+        type: string
+      gender:
+        type: integer
+      id:
+        type: integer
+      isAdmin:
+        type: integer
+      jobTitle:
+        type: string
+      lastLoginAt:
+        type: string
+      lastLoginIP:
+        type: string
+      nickname:
+        type: string
+      phone:
+        type: string
+      position:
+        type: string
+      province:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      status:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    type: object
+  server_internal_module_system_model_reply.ListApiReply:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/server_internal_module_system_model_reply.ApiReply'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  server_internal_module_system_model_reply.ListMenuReply:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/server_internal_module_system_model_reply.MenuReply'
+        type: array
+    type: object
+  server_internal_module_system_model_reply.ListRoleReply:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/server_internal_module_system_model_reply.RoleReply'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  server_internal_module_system_model_reply.LoginReply:
+    properties:
+      refreshToken:
+        type: string
+      token:
+        type: string
+    type: object
+  server_internal_module_system_model_reply.MenuReply:
+    properties:
+      component:
+        type: string
+      createdAt:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      keepAlive:
+        type: integer
+      name:
+        type: string
+      parentId:
+        type: integer
+      path:
+        type: string
+      sort:
+        type: integer
+      status:
+        type: integer
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  server_internal_module_system_model_reply.RoleReply:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      remark:
+        type: string
+      status:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  server_internal_module_system_model_reply.UserListReply:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/server_internal_module_system_model.User'
+        type: array
+      total:
+        type: integer
+    type: object
+  server_internal_module_system_model_request.CreateApiReq:
+    properties:
+      description:
+        type: string
+      group:
+        type: string
+      method:
+        type: string
+      name:
+        type: string
+      path:
+        type: string
+    required:
+    - description
+    - group
+    - method
+    - name
+    - path
+    type: object
+  server_internal_module_system_model_request.CreateRoleReq:
+    properties:
+      key:
+        type: string
+      name:
+        type: string
+      remark:
+        type: string
+      sort:
+        type: integer
+    required:
+    - key
+    - name
+    - remark
+    - sort
+    type: object
+  server_internal_module_system_model_request.CreateUserReq:
+    properties:
+      password:
+        type: string
+      roleKey:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    required:
+    - password
+    - roleKey
+    - username
+    type: object
+  server_internal_module_system_model_request.DeleteUserReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    required:
+    - ids
+    type: object
+  server_internal_module_system_model_request.EmailLoginReq:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+    required:
+    - code
+    - email
+    type: object
+  server_internal_module_system_model_request.LoginReq:
+    properties:
+      password:
+        maxLength: 128
+        minLength: 6
+        type: string
+      username:
+        maxLength: 50
+        minLength: 5
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  server_internal_module_system_model_request.RegisterReq:
+    properties:
+      nickname:
+        maxLength: 50
+        minLength: 2
+        type: string
+      password:
+        maxLength: 128
+        minLength: 6
+        type: string
+      phone:
+        type: string
+    required:
+    - nickname
+    - password
+    - phone
+    type: object
+  server_internal_module_system_model_request.UpdateApiReq:
+    properties:
+      description:
+        type: string
+      group:
+        type: string
+      id:
+        type: integer
+      method:
+        type: string
+      name:
+        type: string
+      path:
+        type: string
+      status:
+        type: integer
+    required:
+    - id
+    - method
+    - name
+    - path
+    type: object
+  server_internal_module_system_model_request.UpdateRoleReq:
+    properties:
+      id:
+        type: integer
+      key:
+        type: string
+      name:
+        type: string
+      remark:
+        type: string
+      sort:
+        type: integer
+    required:
+    - id
+    - key
+    - name
+    - remark
+    - sort
+    type: object
+  server_internal_module_system_model_response.MenuMeta:
+    properties:
+      activePath:
+        type: string
+      fixedTab:
+        type: boolean
+      icon:
+        type: string
+      isFullPage:
+        type: boolean
+      isHide:
+        type: boolean
+      isHideTab:
+        type: boolean
+      isIframe:
+        type: boolean
+      keepAlive:
+        type: boolean
+      link:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      showBadge:
+        type: boolean
+      showTextBadge:
+        type: string
+      title:
+        type: string
+    type: object
+  server_internal_module_system_model_response.MenuTreeResp:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/server_internal_module_system_model_response.MenuTreeResp'
+        type: array
+      component:
+        type: string
+      id:
+        type: integer
+      meta:
+        $ref: '#/definitions/server_internal_module_system_model_response.MenuMeta'
+      name:
+        type: string
+      path:
+        type: string
+      redirect:
+        type: string
+    type: object
+host: localhost:9999
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+  description: 系统管理后台API接口文档
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: 系统管理API
+  version: "1.0"
+paths:
+  /api/auth/emailLogin:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 邮箱登录信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_module_system_model_request.EmailLoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_module_system_model_reply.LoginReply'
+      summary: 邮箱登录
+      tags:
+      - 认证管理
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 登录信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_module_system_model_request.LoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_module_system_model_reply.LoginReply'
+      summary: 用户登录
+      tags:
+      - 认证管理
+  /api/auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 注册信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_module_system_model_request.RegisterReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      summary: 用户注册
+      tags:
+      - 认证管理
+  /api/system/api:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: API信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_module_system_model_request.CreateApiReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 创建API
+      tags:
+      - 接口管理
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: API信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_module_system_model_request.UpdateApiReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 更新API
+      tags:
+      - 接口管理
+  /api/system/api/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: API ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 删除API
+      tags:
+      - 接口管理
+  /api/system/api/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: current
+        type: integer
+      - default: 20
+        description: 每页数量
+        in: query
+        name: size
+        type: integer
+      - description: 接口名称
+        in: query
+        name: name
+        type: string
+      - description: 接口路径
+        in: query
+        name: path
+        type: string
+      - description: 请求方法
+        in: query
+        name: method
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_module_system_model_reply.ListApiReply'
+      security:
+      - Bearer: []
+      summary: 获取API列表
+      tags:
+      - 接口管理
+  /api/system/menu:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_module_system_model.Menu'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 创建菜单
+      tags:
+      - 菜单管理
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_module_system_model.Menu'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 更新菜单
+      tags:
+      - 菜单管理
+  /api/system/menu/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 删除菜单
+      tags:
+      - 菜单管理
+  /api/system/menu/list:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_module_system_model_reply.ListMenuReply'
+      security:
+      - Bearer: []
+      summary: 获取菜单列表
+      tags:
+      - 菜单管理
+  /api/system/menu/tree:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/server_internal_module_system_model_response.MenuTreeResp'
+            type: array
+      security:
+      - Bearer: []
+      summary: 获取菜单树
+      tags:
+      - 菜单管理
+  /api/system/role:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_module_system_model_request.CreateRoleReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 创建角色
+      tags:
+      - 角色管理
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_module_system_model_request.UpdateRoleReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 更新角色
+      tags:
+      - 角色管理
+  /api/system/role/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 删除角色
+      tags:
+      - 角色管理
+  /api/system/role/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 页码
+        in: query
+        name: current
+        type: integer
+      - description: 每页数量
+        in: query
+        name: size
+        type: integer
+      - description: 角色名称
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_module_system_model_reply.ListRoleReply'
+      security:
+      - Bearer: []
+      summary: 获取角色列表
+      tags:
+      - 角色管理
+  /api/system/user:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户ID列表
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_module_system_model_request.DeleteUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 删除用户
+      tags:
+      - 用户管理
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_module_system_model_request.CreateUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 创建用户
+      tags:
+      - 用户管理
+  /api/system/user/info:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_module_system_model_reply.GetUserInfoReply'
+      security:
+      - Bearer: []
+      summary: 获取当前用户信息
+      tags:
+      - 用户管理
+  /api/system/user/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: current
+        type: integer
+      - default: 20
+        description: 每页数量
+        in: query
+        name: size
+        type: integer
+      - description: 用户名
+        in: query
+        name: username
+        type: string
+      - description: 状态
+        in: query
+        name: status
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_module_system_model_reply.UserListReply'
+      security:
+      - Bearer: []
+      summary: 获取用户列表
+      tags:
+      - 用户管理
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

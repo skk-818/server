@@ -3,6 +3,7 @@ package api
 import (
 	"server/internal/core/logger"
 	"server/internal/module/system/biz"
+	_ "server/internal/module/system/model/reply"
 	"server/internal/module/system/model/request"
 	"server/pkg/errorx"
 	"server/pkg/response"
@@ -29,6 +30,14 @@ func (a *AuthApi) InitAuthApi(router *gin.RouterGroup) {
 	router.POST("emailLogin", a.EmailLogin)
 }
 
+// Login godoc
+// @Summary 用户登录
+// @Tags 认证管理
+// @Accept json
+// @Produce json
+// @Param body body request.LoginReq true "登录信息"
+// @Success 200 {object} server_internal_module_system_model_reply.LoginReply
+// @Router /api/auth/login [post]
 func (a *AuthApi) Login(c *gin.Context) {
 	var req request.LoginReq
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -46,6 +55,14 @@ func (a *AuthApi) Login(c *gin.Context) {
 	response.SuccessWithData(c, reply)
 }
 
+// Register godoc
+// @Summary 用户注册
+// @Tags 认证管理
+// @Accept json
+// @Produce json
+// @Param body body request.RegisterReq true "注册信息"
+// @Success 200 {string} string "success"
+// @Router /api/auth/register [post]
 func (a *AuthApi) Register(c *gin.Context) {
 	var req request.RegisterReq
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -62,6 +79,14 @@ func (a *AuthApi) Register(c *gin.Context) {
 	response.Success(c)
 }
 
+// EmailLogin godoc
+// @Summary 邮箱登录
+// @Tags 认证管理
+// @Accept json
+// @Produce json
+// @Param body body request.EmailLoginReq true "邮箱登录信息"
+// @Success 200 {object} server_internal_module_system_model_reply.LoginReply
+// @Router /api/auth/emailLogin [post]
 func (a *AuthApi) EmailLogin(c *gin.Context) {
 	var req request.EmailLoginReq
 	if err := c.ShouldBindJSON(&req); err != nil {

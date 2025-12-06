@@ -27,12 +27,12 @@ func BuilderGetRoleReply(role *model.Role) *GetRoleReply {
 }
 
 type RoleReply struct {
-	ID        int64  `json:"id"`
-	Name      string `json:"name"`
-	Status    int    `json:"status"`
-	Remark    string `json:"remark"`
-	CreatedAt string `json:"createdAt"`
-	UpdatedAt string `json:"updatedAt"`
+	ID          int64  `json:"roleId"`
+	Name        string `json:"roleName"`
+	Key         string `json:"roleCode"`
+	Status      int    `json:"enabled"`
+	Description string `json:"description"`
+	CreatedAt   string `json:"createTime"`
 }
 
 type ListRoleReply struct {
@@ -53,12 +53,12 @@ func BuilderListRoleReply(roles []*model.Role, total int64, page, pageSize int64
 	var list []*RoleReply
 	for _, role := range roles {
 		list = append(list, &RoleReply{
-			ID:        int64(role.ID),
-			Name:      role.Name,
-			Status:    int(role.Status),
-			Remark:    role.Remark,
-			CreatedAt: role.CreatedAt.Format("2006-01-02 15:04:05"),
-			UpdatedAt: role.UpdatedAt.Format("2006-01-02 15:04:05"),
+			ID:          int64(role.ID),
+			Name:        role.Name,
+			Key:         role.Key,
+			Status:      int(role.Status),
+			Description: role.Remark,
+			CreatedAt:   role.CreatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
 

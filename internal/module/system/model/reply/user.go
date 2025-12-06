@@ -30,13 +30,32 @@ type GetUserInfoReply struct {
 	Roles []string `json:"roles"`
 }
 
+type UserItem struct {
+	ID         int64  `json:"id"`
+	UserName   string `json:"userName"`
+	NickName   string `json:"nickName"`
+	UserEmail  string `json:"userEmail"`
+	UserPhone  string `json:"userPhone"`
+	Avatar     string `json:"avatar"`
+	UserGender int64  `json:"userGender"`
+	Status     int64  `json:"status"`
+	CreateTime string `json:"createTime"`
+}
+
+type UserListReply struct {
+	Records []*UserItem `json:"records"`
+	Total   int64       `json:"total"`
+	Current int64       `json:"current"`
+	Size    int64       `json:"size"`
+}
+
 func BuilderGetUserInfoReply(user *model.User) *GetUserInfoReply {
 	roles := make([]string, 0, len(user.Roles))
 	for _, r := range user.Roles {
 		roles = append(roles, r.Key)
 	}
 
-	return &GetUserInfoReply{
+	reply := &GetUserInfoReply{
 		ID:          int64(user.ID),
 		Username:    user.Username,
 		Nickname:    user.Nickname,
@@ -55,8 +74,11 @@ func BuilderGetUserInfoReply(user *model.User) *GetUserInfoReply {
 		JobTitle:    user.JobTitle,
 		Tags:        strings.Split(user.Tags, ","),
 		CreatedAt:   user.CreatedAt.Format("2006-01-02 15:04:05"),
-		LastLoginAt: user.LastLoginAt.Format("2006-01-02 15:04:05"),
 		LastLoginIP: user.LastLoginIP,
 		Roles:       roles,
 	}
+	if user.LastLoginAt != nil {
+		reply.LastLoginAt = user.LastLoginAt.Format("2006-01-02 15:04:05")
+	}
+	return reply
 }

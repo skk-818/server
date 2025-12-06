@@ -8,6 +8,7 @@ import (
 	"server/pkg"
 	"server/pkg/errorx"
 	"strings"
+	"time"
 
 	"go.uber.org/zap"
 	"gorm.io/gorm/schema"
@@ -18,6 +19,7 @@ type InitUsecase struct {
 	initRepo      repo.InitRepo
 	userRepo      repo.UserRepo
 	roleRepo      repo.RoleRepo
+	menuRepo      repo.MenuRepo
 	apiRepo       repo.ApiRepo
 	casbinUsecase casbinUsecase
 }
@@ -27,6 +29,7 @@ func NewInitUsecase(
 	initRepo repo.InitRepo,
 	userRepo repo.UserRepo,
 	roleRepo repo.RoleRepo,
+	menuRepo repo.MenuRepo,
 	apiRepo repo.ApiRepo,
 	casbinUsecase casbinUsecase,
 ) *InitUsecase {
@@ -35,6 +38,7 @@ func NewInitUsecase(
 		initRepo:      initRepo,
 		userRepo:      userRepo,
 		roleRepo:      roleRepo,
+		menuRepo:      menuRepo,
 		apiRepo:       apiRepo,
 		casbinUsecase: casbinUsecase,
 	}
@@ -110,25 +114,29 @@ func (u *InitUsecase) UserInitialize() error {
 		return errorx.ErrAdminRoleNotFound
 	}
 
+	now := time.Now()
+
 	user := &model.User{
-		BaseModel:  model.BaseModel{ID: 1},
-		Username:   "admin",
-		Password:   pkg.HashPassword("123456"),
-		Nickname:   "系统管理员",
-		Email:      "202000000@qq.com",
-		Phone:      "15599999999",
-		Gender:     model.UserGenderMale,
-		Status:     model.UserStatusEnable,
-		IsAdmin:    model.UserIsSystem,
-		Province:   "四川省",
-		City:       "成都市",
-		District:   "xxx",
-		Address:    "四川省成都市xxx",
-		Position:   "后端开发工程师",
-		Department: "开发部",
-		JobTitle:   "开发经理",
-		Tags:       strings.Join([]string{"天然呆", "懒癌患者"}, ","),
-		Roles:      []*model.Role{role},
+		BaseModel:   model.BaseModel{ID: 1},
+		Username:    "admin",
+		Password:    pkg.HashPassword("123456"),
+		Nickname:    "系统管理员",
+		Email:       "202000000@qq.com",
+		Phone:       "15599999999",
+		Gender:      model.UserGenderMale,
+		Status:      model.UserStatusEnable,
+		IsAdmin:     model.UserIsSystem,
+		Province:    "四川省",
+		City:        "成都市",
+		District:    "xxx",
+		Address:     "四川省成都市xxx",
+		Position:    "后端开发工程师",
+		Department:  "开发部",
+		JobTitle:    "开发经理",
+		Tags:        strings.Join([]string{"天然呆", "懒癌患者"}, ","),
+		Roles:       []*model.Role{role},
+		LastLoginAt: &now,
+		LastLoginIP: "",
 	}
 	if err := u.userRepo.Create(context.Background(), user); err != nil {
 		return err
@@ -137,33 +145,44 @@ func (u *InitUsecase) UserInitialize() error {
 }
 
 func (u *InitUsecase) MenuInitialize() error {
-	// TODO MENU初始化
+	menus := []*model.Menu{
+		{BaseModel: model.BaseModel{ID: 1}, ParentID: 0, Name: "Dashboard", Title: "仪表盘", Path: "/dashboard", Component: "/index/index", Roles: model.RoleKeyAdmin, Icon: "ri:pie-chart-line", Sort: 1, Status: 1, KeepAlive: 1},
+		{BaseModel: model.BaseModel{ID: 2}, ParentID: 1, Name: "Console", Title: "工作台", Path: "dashboard/console", Component: "/dashboard/console", Roles: model.RoleKeyAdmin, Icon: "ri:home-smile-2-line", Sort: 1, Status: 1, KeepAlive: 1},
+		{BaseModel: model.BaseModel{ID: 3}, ParentID: 0, Name: "System", Title: "系统管理", Path: "/system", Component: "/index/index", Roles: model.RoleKeyAdmin, Icon: "ri:user-3-line", Sort: 2, Status: 1, KeepAlive: 1},
+		{BaseModel: model.BaseModel{ID: 4}, ParentID: 3, Name: "User", Title: "用户管理", Path: "system/user", Component: "/system/user", Roles: model.RoleKeyAdmin, Icon: "ri:user-line", Sort: 1, Status: 1, KeepAlive: 1},
+		{BaseModel: model.BaseModel{ID: 5}, ParentID: 3, Name: "Role", Title: "角色管理", Path: "system/role", Component: "/system/role", Roles: model.RoleKeyAdmin, Icon: "ri:user-settings-line", Sort: 2, Status: 1, KeepAlive: 1},
+		{BaseModel: model.BaseModel{ID: 6}, ParentID: 3, Name: "Menu", Title: "菜单管理", Path: "system/menu", Component: "/system/menu", Roles: model.RoleKeyAdmin, Icon: "ri:menu-line", Sort: 3, Status: 1, KeepAlive: 1},
+		{BaseModel: model.BaseModel{ID: 7}, ParentID: 3, Name: "Api", Title: "接口管理", Path: "system/api", Component: "/system/api", Roles: model.RoleKeyAdmin, Icon: "ri:api-line", Sort: 4, Status: 1, KeepAlive: 1},
+	}
+
+	for _, menu := range menus {
+		if err := u.menuRepo.Create(context.Background(), menu); err != nil {
+			return err
+		}
+	}
+
 	return u.initRepo.SetInitialized(model.InitNameMenu, "v1.0.0", "初始化菜单")
 }
 
 func (u *InitUsecase) ApiInitialize() error {
 	apis := []*model.Api{
-		{Name: "SystemDashboardData", Path: "/api/system/dashboard/data", Method: "POST", Description: "管理员仪表盘数据", Group: "dashboard", Status: 1},
-		{Name: "SystemUserCreate", Path: "/api/system/user/create", Method: "POST", Description: "管理员添加用户", Group: "user", Status: 1},
-		{Name: "SystemUserList", Path: "/api/system/user/list", Method: "POST", Description: "管理员获取用户分页列表", Group: "user", Status: 1},
-		{Name: "SystemUserUpdate", Path: "/api/system/user/update", Method: "POST", Description: "管理员更新用户信息", Group: "user", Status: 1},
-		{Name: "SystemUserInfo", Path: "/api/system/user/info", Method: "GET", Description: "管理员获取用户信息", Group: "user", Status: 1},
-		{Name: "SystemUserDelete", Path: "/api/system/user/delete", Method: "POST", Description: "管理员删除用户", Group: "user", Status: 1},
-		{Name: "SystemUserSwitchStatus", Path: "/api/system/user/switchStatus", Method: "POST", Description: "管理员切换用户状态", Group: "user", Status: 1},
-		{Name: "SystemUserSetRole", Path: "/api/system/user/setRole", Method: "POST", Description: "管理员设置用户角色", Group: "user", Status: 1},
-		{Name: "SystemRoleCreate", Path: "/api/system/role/create", Method: "POST", Description: "管理员创建角色", Group: "role", Status: 1},
-		{Name: "SystemRoleDelete", Path: "/api/system/role/delete", Method: "POST", Description: "管理员更新角色", Group: "role", Status: 1},
-		{Name: "SystemRoleUpdate", Path: "/api/system/role/update", Method: "POST", Description: "管理员删除角色", Group: "role", Status: 1},
-		{Name: "SystemRoleInfo", Path: "/api/system/role/info", Method: "POST", Description: "管理员查询角色", Group: "role", Status: 1},
-		{Name: "SystemRoleList", Path: "/api/system/role/list", Method: "POST", Description: "管理员查询角色列表", Group: "role", Status: 1},
-		{Name: "SystemRoleAssignApiPermissions", Path: "/api/system/role/assignApiPermissions", Method: "POST", Description: "管理员分配角色api权限", Group: "role", Status: 1},
-		{Name: "SystemRoleAssignMenuPermissions", Path: "/api/system/role/assignMenuPermissions", Method: "POST", Description: "管理员分配角色菜单权限", Group: "role", Status: 1},
-		{Name: "SystemMenuCreate", Path: "/api/system/menu/create", Method: "POST", Description: "管理员创建菜单", Group: "menu", Status: 1},
-		{Name: "SystemMenuDelete", Path: "/api/system/menu/delete", Method: "POST", Description: "管理员更新菜单", Group: "menu", Status: 1},
-		{Name: "SystemMenuUpdate", Path: "/api/system/menu/update", Method: "POST", Description: "管理员删除菜单", Group: "menu", Status: 1},
-		{Name: "SystemMenuInfo", Path: "/api/system/menu/info", Method: "POST", Description: "管理员查询菜单", Group: "menu", Status: 1},
-		{Name: "SystemMenuList", Path: "/api/system/menu/list", Method: "POST", Description: "管理员查询菜单列表", Group: "menu", Status: 1},
-		{Name: "SystemMenuDynamic", Path: "/api/system/menu/dynamic", Method: "POST", Description: "管理员动态菜单", Group: "menu", Status: 1},
+		{Name: "SystemUserInfo", Path: "/api/system/user/info", Method: "GET", Description: "获取用户信息", Group: "user", Status: 1},
+		{Name: "SystemUserList", Path: "/api/system/user/list", Method: "GET", Description: "获取用户列表", Group: "user", Status: 1},
+		{Name: "SystemUserCreate", Path: "/api/system/user", Method: "POST", Description: "创建用户", Group: "user", Status: 1},
+		{Name: "SystemUserDelete", Path: "/api/system/user", Method: "DELETE", Description: "删除用户", Group: "user", Status: 1},
+		{Name: "SystemRoleList", Path: "/api/system/role/list", Method: "GET", Description: "获取角色列表", Group: "role", Status: 1},
+		{Name: "SystemRoleCreate", Path: "/api/system/role", Method: "POST", Description: "创建角色", Group: "role", Status: 1},
+		{Name: "SystemRoleUpdate", Path: "/api/system/role", Method: "PUT", Description: "更新角色", Group: "role", Status: 1},
+		{Name: "SystemRoleDelete", Path: "/api/system/role/*", Method: "DELETE", Description: "删除角色", Group: "role", Status: 1},
+		{Name: "SystemMenuTree", Path: "/api/system/menu/tree", Method: "GET", Description: "获取菜单树", Group: "menu", Status: 1},
+		{Name: "SystemMenuList", Path: "/api/system/menu/list", Method: "GET", Description: "获取菜单列表", Group: "menu", Status: 1},
+		{Name: "SystemMenuCreate", Path: "/api/system/menu", Method: "POST", Description: "创建菜单", Group: "menu", Status: 1},
+		{Name: "SystemMenuUpdate", Path: "/api/system/menu", Method: "PUT", Description: "更新菜单", Group: "menu", Status: 1},
+		{Name: "SystemMenuDelete", Path: "/api/system/menu/*", Method: "DELETE", Description: "删除菜单", Group: "menu", Status: 1},
+		{Name: "SystemApiList", Path: "/api/system/api/list", Method: "GET", Description: "获取API列表", Group: "api", Status: 1},
+		{Name: "SystemApiCreate", Path: "/api/system/api", Method: "POST", Description: "创建API", Group: "api", Status: 1},
+		{Name: "SystemApiUpdate", Path: "/api/system/api", Method: "PUT", Description: "更新API", Group: "api", Status: 1},
+		{Name: "SystemApiDelete", Path: "/api/system/api/*", Method: "DELETE", Description: "删除API", Group: "api", Status: 1},
 	}
 	if err := u.apiRepo.BatchCreate(context.Background(), apis); err != nil {
 		return err
@@ -174,6 +193,22 @@ func (u *InitUsecase) ApiInitialize() error {
 func (u *InitUsecase) CasbinInitialize() error {
 	policies := [][]string{
 		{model.RoleKeyAdmin, "/api/system/user/info", "GET"},
+		{model.RoleKeyAdmin, "/api/system/user/list", "GET"},
+		{model.RoleKeyAdmin, "/api/system/user", "POST"},
+		{model.RoleKeyAdmin, "/api/system/user", "DELETE"},
+		{model.RoleKeyAdmin, "/api/system/role/list", "GET"},
+		{model.RoleKeyAdmin, "/api/system/role", "POST"},
+		{model.RoleKeyAdmin, "/api/system/role", "PUT"},
+		{model.RoleKeyAdmin, "/api/system/role/*", "DELETE"},
+		{model.RoleKeyAdmin, "/api/system/menu/tree", "GET"},
+		{model.RoleKeyAdmin, "/api/system/menu/list", "GET"},
+		{model.RoleKeyAdmin, "/api/system/menu", "POST"},
+		{model.RoleKeyAdmin, "/api/system/menu", "PUT"},
+		{model.RoleKeyAdmin, "/api/system/menu/*", "DELETE"},
+		{model.RoleKeyAdmin, "/api/system/api/list", "GET"},
+		{model.RoleKeyAdmin, "/api/system/api", "POST"},
+		{model.RoleKeyAdmin, "/api/system/api", "PUT"},
+		{model.RoleKeyAdmin, "/api/system/api/*", "DELETE"},
 	}
 
 	for _, policy := range policies {

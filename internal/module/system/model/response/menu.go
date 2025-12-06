@@ -11,16 +11,17 @@ type MenuTreeResp struct {
 }
 
 type MenuMeta struct {
-	Title      string   `json:"title"`
-	Icon       string   `json:"icon,omitempty"`
-	IsHide     bool     `json:"isHide,omitempty"`
-	IsHideTab  bool     `json:"isHideTab,omitempty"`
-	Link       string   `json:"link,omitempty"`
-	IsIframe   bool     `json:"isIframe,omitempty"`
-	KeepAlive  bool     `json:"keepAlive,omitempty"`
-	Roles      []string `json:"roles,omitempty"`
-	FixedTab   bool     `json:"fixedTab,omitempty"`
-	ShowBadge  bool     `json:"showBadge,omitempty"`
-	ActivePath string   `json:"activePath,omitempty"`
-	IsFullPage bool     `json:"isFullPage,omitempty"`
+	Title         string   `json:"title"`
+	Icon          string   `json:"icon,omitempty"`
+	IsHide        bool     `json:"isHide,omitempty"`
+	IsHideTab     bool     `json:"isHideTab,omitempty"`
+	Link          string   `json:"link,omitempty"`
+	IsIframe      bool     `json:"isIframe,omitempty"`
+	KeepAlive     bool     `json:"keepAlive,omitempty"`
+	Roles         []string `json:"roles,omitempty"`
+	FixedTab      bool     `json:"fixedTab,omitempty"`
+	ShowBadge     bool     `json:"showBadge,omitempty"`
+	ShowTextBadge string   `json:"showTextBadge,omitempty"`
+	ActivePath    string   `json:"activePath,omitempty"`
+	IsFullPage    bool     `json:"isFullPage,omitempty"`
 }

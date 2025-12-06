@@ -1,9 +1,9 @@
 package request
 
 type UserListReq struct {
-	Username *string `json:"username"`
-	Status   *int    `json:"status"`
-	Gender   *int    `json:"gender"`
+	Username *string `json:"username" form:"username"`
+	Status   *int    `json:"status" form:"status"`
+	Gender   *int    `json:"gender" form:"gender"`
 	PageInfo
 }
 

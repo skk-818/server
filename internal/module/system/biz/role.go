@@ -112,16 +112,16 @@ func (u *RoleUsecase) Create(ctx context.Context, req *request.CreateRoleReq) er
 	return nil
 }
 
-func (u *RoleUsecase) Delete(ctx context.Context, req *request.DeleteRoleReq) error {
-
-	roles, err := u.roleRepo.FindByIDs(ctx, req.Ids)
+func (u *RoleUsecase) Delete(ctx context.Context, id int64) error {
+	ids := []int64{id}
+	roles, err := u.roleRepo.FindByIDs(ctx, ids)
 	if err != nil {
-		u.logger.Error("[ RoleUsecase ] roleRepo.FindByID error", zap.Any("req", req), zap.Error(err))
+		u.logger.Error("[ RoleUsecase ] roleRepo.FindByID error", zap.Any("id", id), zap.Error(err))
 		return errorx.ErrInternal
 	}
 
-	if len(roles) != len(req.Ids) {
-		u.logger.Error("[ RoleUsecase ] role not found", zap.Any("ids len", len(req.Ids)), zap.Any("roles len", len(roles)))
+	if len(roles) != len(ids) {
+		u.logger.Error("[ RoleUsecase ] role not found", zap.Any("id", id))
 		return errorx.ErrRoleNotFound
 	}
 
@@ -133,12 +133,12 @@ func (u *RoleUsecase) Delete(ctx context.Context, req *request.DeleteRoleReq) er
 	}
 
 	if len(deleteIds) == 0 {
-		u.logger.Error("[ RoleUsecase ] role is system", zap.Any("req", req))
+		u.logger.Error("[ RoleUsecase ] role is system", zap.Any("id", id))
 		return errorx.ErrRoleIsSystem
 	}
 
 	if err := u.roleRepo.BatchDelete(ctx, deleteIds); err != nil {
-		u.logger.Error("[ RoleUsecase ] roleRepo.BatchDelete error", zap.Any("req", req), zap.Error(err))
+		u.logger.Error("[ RoleUsecase ] roleRepo.BatchDelete error", zap.Any("id", id), zap.Error(err))
 		return errorx.ErrInternal
 	}
 

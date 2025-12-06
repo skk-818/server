@@ -123,6 +123,35 @@ func randomTags(tags []string, n int) []string {
 	return tags[:n]
 }
 
+func (u *UserUsecase) List(ctx context.Context, req *request.UserListReq) (*reply.UserListReply, error) {
+	users, total, err := u.userRepo.List(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	records := make([]*reply.UserItem, 0, len(users))
+	for _, user := range users {
+		records = append(records, &reply.UserItem{
+			ID:         int64(user.ID),
+			UserName:   user.Username,
+			NickName:   user.Nickname,
+			UserEmail:  user.Email,
+			UserPhone:  user.Phone,
+			Avatar:     user.Avatar,
+			UserGender: user.Gender,
+			Status:     user.Status,
+			CreateTime: user.CreatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	return &reply.UserListReply{
+		Records: records,
+		Total:   total,
+		Current: *req.Page,
+		Size:    *req.Page,
+	}, nil
+}
+
 func (u *UserUsecase) Delete(ctx context.Context, req *request.DeleteUserReq) error {
 	users, err := u.userRepo.FindByIds(ctx, req.Ids)
 	if err != nil {

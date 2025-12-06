@@ -67,7 +67,7 @@ func (r *apiRepo) List(ctx context.Context, req *request.ApiListReq) ([]*model.A
 	if err := db.
 		Offset(offset).
 		Limit(limit).
-		Order("created_at DESC").
+		Order("id DESC").
 		Find(&apis).Error; err != nil {
 		return nil, 0, errors.WithStack(err)
 	}
