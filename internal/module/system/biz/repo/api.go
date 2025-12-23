@@ -15,4 +15,8 @@ type ApiRepo interface {
 	BatchDelete(context.Context, []int64) error
 	FindByIds(context.Context, []int64) ([]*model.Api, error)
 	BatchCreate(context.Context, []*model.Api) error
+	FindByPathMethods(context.Context, []struct {
+		Path   string
+		Method string
+	}) ([]*model.Api, error)
 }

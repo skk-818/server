@@ -28,6 +28,7 @@ type (
 		DeletePermissionsForRole(role string) error
 		AddPolicies([][]string) (bool, error)
 		BatchAddPolicies([][]string) (bool, error)
+		GetPermissionsForRole(role string) ([][]string, error)
 	}
 )
 
@@ -63,7 +64,7 @@ g = _, _
 e = some(where (p.eft == allow))
 
 [matchers]
-m = r.sub == p.sub && r.obj == p.obj && r.act == p.act
+m = r.sub == p.sub && keyMatch2(r.obj, p.obj) && r.act == p.act
 `
 		m, e := casbinModel.NewModelFromString(modelText)
 		if e != nil {
@@ -185,4 +186,9 @@ func (u *CasbinUsecase) AddPolicies(policies [][]string) (bool, error) {
 
 	u.logger.Info("批量添加权限成功", zap.Any("policies", policies))
 	return true, nil
+}
+
+// GetPermissionsForRole 获取角色的所有权限
+func (u *CasbinUsecase) GetPermissionsForRole(role string) ([][]string, error) {
+	return u.enforcer.GetFilteredPolicy(0, role)
 }

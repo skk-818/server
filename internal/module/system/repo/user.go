@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"server/internal/core/mysql"
 	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
 	"server/internal/module/system/model/request"
@@ -15,9 +16,9 @@ type userRepo struct {
 	db *gorm.DB
 }
 
-func NewUserRepo(db *gorm.DB) repo.UserRepo {
+func NewUserRepo(systemDB *mysql.SystemDB) repo.UserRepo {
 	return &userRepo{
-		db: db,
+		db: systemDB.DB,
 	}
 }
 

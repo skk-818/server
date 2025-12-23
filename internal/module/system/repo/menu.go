@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"server/internal/core/mysql"
 	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
 	"server/internal/module/system/model/request"
@@ -14,8 +15,8 @@ type menuRepo struct {
 	db *gorm.DB
 }
 
-func NewMenuRepo(db *gorm.DB) repo.MenuRepo {
-	return &menuRepo{db: db}
+func NewMenuRepo(systemDB *mysql.SystemDB) repo.MenuRepo {
+	return &menuRepo{db: systemDB.DB}
 }
 
 func (m *menuRepo) Create(ctx context.Context, menu *model.Menu) error {

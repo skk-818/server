@@ -1,11 +1,12 @@
 package api
 
 import (
+	"context"
 	"server/internal/core/logger"
 	"server/internal/module/system/biz"
 	"server/internal/module/system/model"
 	_ "server/internal/module/system/model/reply"
-	_ "server/internal/module/system/model/response"
+	modelResponse "server/internal/module/system/model/response"
 	"server/pkg/response"
 	"strconv"
 
@@ -39,10 +40,37 @@ func (a *MenuApi) InitMenuApi(router *gin.RouterGroup) {
 // @Accept json
 // @Produce json
 // @Security Bearer
+// @Param all query bool false "是否返回所有菜单（用于权限分配）"
 // @Success 200 {array} server_internal_module_system_model_response.MenuTreeResp
 // @Router /api/system/menu/tree [get]
 func (a *MenuApi) GetMenuTree(c *gin.Context) {
-	tree, err := a.menuUsecase.GetMenuTree(c)
+	// 检查是否需要返回所有菜单（用于权限分配）
+	all := c.Query("all") == "true"
+
+	var tree []*modelResponse.MenuTreeResp
+	var err error
+
+	if all {
+		// 返回所有菜单（不过滤权限）
+		tree, err = a.menuUsecase.GetAllMenuTree(c.Request.Context())
+	} else {
+		// 返回用户有权限的菜单
+		// 从 gin.Context 中获取 claims
+		claimsVal, exists := c.Get("claims")
+		if !exists {
+			response.Fail(c, nil)
+			return
+		}
+
+		// 将 userID 传递到 context
+		ctx := c.Request.Context()
+		if claims, ok := claimsVal.(interface{ GetUserID() uint }); ok {
+			ctx = context.WithValue(ctx, "userID", claims.GetUserID())
+		}
+
+		tree, err = a.menuUsecase.GetMenuTree(ctx)
+	}
+
 	if err != nil {
 		a.logger.Error("[MenuApi] GetMenuTree error", zap.Error(err))
 		response.Fail(c, err)

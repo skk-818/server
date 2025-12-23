@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/schema"
+	"server/internal/core/mysql"
 	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
 )
@@ -13,8 +14,8 @@ type initRepo struct {
 	db *gorm.DB
 }
 
-func NewInitRepo(db *gorm.DB) repo.InitRepo {
-	return &initRepo{db: db}
+func NewInitRepo(systemDB *mysql.SystemDB) repo.InitRepo {
+	return &initRepo{db: systemDB.DB}
 }
 
 func (r *initRepo) AutoMigrate(tables []schema.Tabler) error {

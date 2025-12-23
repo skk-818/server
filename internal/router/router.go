@@ -4,7 +4,8 @@ import (
 	"server/internal/core/config"
 	"server/internal/core/logger"
 	"server/internal/middleware"
-	"server/internal/module/system/api"
+	im "server/internal/module/im/api"
+	system "server/internal/module/system/api"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -17,20 +18,23 @@ type Group struct {
 	logger    logger.Logger
 	cfg       *config.HTTPServer
 	cors      *middleware.CorsMiddleware
-	systemApi *api.SystemApi
+	systemApi *system.SystemApi
+	imApi     *im.IMApi
 }
 
 func NewGroup(
 	logger logger.Logger,
 	cfg *config.HTTPServer,
 	corsMiddleware *middleware.CorsMiddleware,
-	systemApi *api.SystemApi,
+	systemApi *system.SystemApi,
+	imApi *im.IMApi,
 ) *Group {
 	return &Group{
 		logger:    logger,
 		cfg:       cfg,
 		cors:      corsMiddleware,
 		systemApi: systemApi,
+		imApi:     imApi,
 	}
 }
 

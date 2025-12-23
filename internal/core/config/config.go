@@ -2,15 +2,17 @@ package config
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Logger *Logger     `mapstructure:"logger" json:"logger" yaml:"logger"`
-	MySQL  *Mysql      `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
-	Http   *HTTPServer `mapstructure:"http" json:"http" yaml:"http"`
-	Jwt    *Jwt        `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
-	Redis  *Redis      `mapstructure:"redis" json:"redis" yaml:"redis"`
+	Logger      *Logger     `mapstructure:"logger" json:"logger" yaml:"logger"`
+	SystemMySQL *Mysql      `mapstructure:"system_mysql" json:"system_mysql" yaml:"system_mysql"`
+	ImMySQL     *Mysql      `mapstructure:"im_mysql" json:"im_mysql" yaml:"im_mysql"`
+	Http        *HTTPServer `mapstructure:"http" json:"http" yaml:"http"`
+	Jwt         *Jwt        `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
+	Redis       *Redis      `mapstructure:"redis" json:"redis" yaml:"redis"`
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -36,7 +38,7 @@ func ProvideLoggerConfig(cfg *Config) *Logger {
 }
 
 func ProvideMysqlConfig(cfg *Config) *Mysql {
-	return cfg.MySQL
+	return cfg.SystemMySQL
 }
 
 func ProvideHttpServerConfig(cfg *Config) *HTTPServer {
@@ -53,4 +55,8 @@ func ProvideJwtConfig(cfg *Config) *Jwt {
 
 func ProvideRedisConfig(cfg *Config) *Redis {
 	return cfg.Redis
+}
+
+func ProvideImMysqlConfig(cfg *Config) *Mysql {
+	return cfg.ImMySQL
 }

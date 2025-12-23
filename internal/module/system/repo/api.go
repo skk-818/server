@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"server/internal/core/mysql"
 	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
 	"server/internal/module/system/model/request"
@@ -13,8 +14,8 @@ type apiRepo struct {
 	db *gorm.DB
 }
 
-func NewApiRepo(db *gorm.DB) repo.ApiRepo {
-	return &apiRepo{db: db}
+func NewApiRepo(systemDB *mysql.SystemDB) repo.ApiRepo {
+	return &apiRepo{db: systemDB.DB}
 }
 
 func (r *apiRepo) Create(ctx context.Context, api *model.Api) error {
@@ -89,4 +90,28 @@ func (r *apiRepo) FindByIds(ctx context.Context, ids []int64) ([]*model.Api, err
 func (r *apiRepo) BatchCreate(ctx context.Context, list []*model.Api) error {
 	err := r.db.WithContext(ctx).Create(&list).Error
 	return errors.WithStack(err)
+}
+
+func (r *apiRepo) FindByPathMethods(ctx context.Context, pathMethods []struct {
+	Path   string
+	Method string
+}) ([]*model.Api, error) {
+	if len(pathMethods) == 0 {
+		return []*model.Api{}, nil
+	}
+
+	var apis []*model.Api
+	db := r.db.WithContext(ctx)
+
+	// 构建 OR 查询条件
+	for i, pm := range pathMethods {
+		if i == 0 {
+			db = db.Where("(path = ? AND method = ?)", pm.Path, pm.Method)
+		} else {
+			db = db.Or("(path = ? AND method = ?)", pm.Path, pm.Method)
+		}
+	}
+
+	err := db.Find(&apis).Error
+	return apis, errors.WithStack(err)
 }

@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"server/internal/core/mysql"
 	"server/internal/module/system/biz/repo"
 
 	"gorm.io/gorm"
@@ -10,9 +11,9 @@ type casbinRepo struct {
 	db *gorm.DB
 }
 
-func NewCasbinRepo(db *gorm.DB) repo.CasbinRepo {
+func NewCasbinRepo(systemDB *mysql.SystemDB) repo.CasbinRepo {
 	return &casbinRepo{
-		db: db,
+		db: systemDB.DB,
 	}
 }
 

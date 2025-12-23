@@ -16,6 +16,7 @@ type RoleUsecase struct {
 	logger        logger.Logger
 	roleRepo      repo.RoleRepo
 	apiRepo       repo.ApiRepo
+	roleMenuRepo  repo.RoleMenuRepo
 	casbinUsecase casbinUsecase
 }
 
@@ -23,12 +24,14 @@ func NewRoleUsecase(
 	logger logger.Logger,
 	roleRepo repo.RoleRepo,
 	apiRepo repo.ApiRepo,
+	roleMenuRepo repo.RoleMenuRepo,
 	casbinUsecase casbinUsecase,
 ) *RoleUsecase {
 	return &RoleUsecase{
 		logger:        logger,
 		roleRepo:      roleRepo,
 		apiRepo:       apiRepo,
+		roleMenuRepo:  roleMenuRepo,
 		casbinUsecase: casbinUsecase,
 	}
 }
@@ -201,4 +204,103 @@ func (u *RoleUsecase) List(ctx context.Context, req *request.RoleListReq) (*repl
 	}
 
 	return reply.BuilderListRoleReply(roles, total, *req.Page, *req.PageSize), nil
+}
+
+// GetRoleApiPermissions 获取角色的API权限列表
+func (u *RoleUsecase) GetRoleApiPermissions(ctx context.Context, roleId int64) ([]int64, error) {
+	role, err := u.roleRepo.FindByID(ctx, roleId)
+	if err != nil {
+		u.logger.Error("[ RoleUsecase ] roleRepo.FindByID error", zap.Any("roleId", roleId), zap.Error(err))
+		return nil, errorx.ErrInternal
+	}
+	if role == nil {
+		u.logger.Error("[ RoleUsecase ] role not found", zap.Any("roleId", roleId))
+		return nil, errorx.ErrRoleNotFound
+	}
+
+	// 从 Casbin 获取角色的所有权限策略
+	policies, err := u.casbinUsecase.GetPermissionsForRole(role.Key)
+	if err != nil {
+		u.logger.Error("[ RoleUsecase ] casbinUsecase.GetPermissionsForRole error", zap.Any("roleId", roleId), zap.Error(err))
+		return nil, errorx.ErrInternal
+	}
+
+	// 提取所有的 path 和 method，然后查询对应的 API ID
+	var pathMethods []struct {
+		Path   string
+		Method string
+	}
+	for _, policy := range policies {
+		if len(policy) >= 3 {
+			pathMethods = append(pathMethods, struct {
+				Path   string
+				Method string
+			}{
+				Path:   policy[1],
+				Method: policy[2],
+			})
+		}
+	}
+
+	if len(pathMethods) == 0 {
+		return []int64{}, nil
+	}
+
+	// 根据 path 和 method 查询 API 列表
+	apis, err := u.apiRepo.FindByPathMethods(ctx, pathMethods)
+	if err != nil {
+		u.logger.Error("[ RoleUsecase ] apiRepo.FindByPathMethods error", zap.Any("pathMethods", pathMethods), zap.Error(err))
+		return nil, errorx.ErrInternal
+	}
+
+	// 提取 API ID
+	var apiIds []int64
+	for _, api := range apis {
+		apiIds = append(apiIds, int64(api.ID))
+	}
+
+	return apiIds, nil
+}
+
+// AssignMenuPermissions 分配菜单权限给角色
+func (u *RoleUsecase) AssignMenuPermissions(ctx context.Context, roleId int64, menuIds []uint64) error {
+	role, err := u.roleRepo.FindByID(ctx, roleId)
+	if err != nil {
+		u.logger.Error("[ RoleUsecase ] roleRepo.FindByID error", zap.Any("roleId", roleId), zap.Error(err))
+		return errorx.ErrInternal
+	}
+	if role == nil {
+		u.logger.Error("[ RoleUsecase ] role not found", zap.Any("roleId", roleId))
+		return errorx.ErrRoleNotFound
+	}
+
+	// 分配菜单权限
+	if err := u.roleMenuRepo.AssignMenus(ctx, uint64(roleId), menuIds); err != nil {
+		u.logger.Error("[ RoleUsecase ] roleMenuRepo.AssignMenus error", zap.Any("roleId", roleId), zap.Any("menuIds", menuIds), zap.Error(err))
+		return errorx.ErrInternal
+	}
+
+	return nil
+}
+
+// GetRoleMenuPermissions 获取角色的菜单权限列表
+func (u *RoleUsecase) GetRoleMenuPermissions(ctx context.Context, roleId int64) ([]uint64, error) {
+	role, err := u.roleRepo.FindByID(ctx, roleId)
+	if err != nil {
+		u.logger.Error("[ RoleUsecase ] roleRepo.FindByID error", zap.Any("roleId", roleId), zap.Error(err))
+		return nil, errorx.ErrInternal
+	}
+	if role == nil {
+		u.logger.Error("[ RoleUsecase ] role not found", zap.Any("roleId", roleId))
+		return nil, errorx.ErrRoleNotFound
+	}
+
+	// 获取菜单权限
+	menuIds, err := u.roleMenuRepo.GetMenuIdsByRoleId(ctx, uint64(roleId))
+	if err != nil {
+		u.logger.Error("[ RoleUsecase ] roleMenuRepo.GetMenuIdsByRoleId error", zap.Any("roleId", roleId), zap.Error(err))
+		return nil, errorx.ErrInternal
+	}
+
+	return menuIds, nil
 }

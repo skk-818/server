@@ -21,6 +21,7 @@ type InitUsecase struct {
 	roleRepo      repo.RoleRepo
 	menuRepo      repo.MenuRepo
 	apiRepo       repo.ApiRepo
+	roleMenuRepo  repo.RoleMenuRepo
 	casbinUsecase casbinUsecase
 }
 
@@ -31,6 +32,7 @@ func NewInitUsecase(
 	roleRepo repo.RoleRepo,
 	menuRepo repo.MenuRepo,
 	apiRepo repo.ApiRepo,
+	roleMenuRepo repo.RoleMenuRepo,
 	casbinUsecase casbinUsecase,
 ) *InitUsecase {
 	return &InitUsecase{
@@ -40,13 +42,14 @@ func NewInitUsecase(
 		roleRepo:      roleRepo,
 		menuRepo:      menuRepo,
 		apiRepo:       apiRepo,
+		roleMenuRepo:  roleMenuRepo,
 		casbinUsecase: casbinUsecase,
 	}
 }
 
 func (u *InitUsecase) InitIfNeeded() error {
 	if err := u.initRepo.AutoMigrate([]schema.Tabler{
-		&model.Init{}, &model.Role{}, &model.User{}, &model.Menu{}, &model.Api{},
+		&model.Init{}, &model.Role{}, &model.User{}, &model.Menu{}, &model.Api{}, &model.RoleMenu{},
 	}); err != nil {
 		u.logger.Error("[InitUsecase] failed to initialize database table structure", zap.Any("err", err))
 		return err
@@ -62,6 +65,7 @@ func (u *InitUsecase) InitIfNeeded() error {
 		{"menu", u.MenuIsInitialized, u.MenuInitialize},
 		{"api", u.ApiIsInitialized, u.ApiInitialize},
 		{"casbin", u.CasbinIsInitialized, u.CasbinInitialize},
+		{"role_menu", u.RoleMenuIsInitialized, u.RoleMenuInitialize},
 	}
 
 	for _, step := range initSteps {
@@ -90,6 +94,9 @@ func (u *InitUsecase) UserIsInitialized() bool   { return u.isInitialized(model.
 func (u *InitUsecase) MenuIsInitialized() bool   { return u.isInitialized(model.InitNameMenu) }
 func (u *InitUsecase) ApiIsInitialized() bool    { return u.isInitialized(model.InitNameApi) }
 func (u *InitUsecase) CasbinIsInitialized() bool { return u.isInitialized(model.InitNameCasbin) }
+func (u *InitUsecase) RoleMenuIsInitialized() bool {
+	return u.isInitialized(model.InitNameRoleMenu)
+}
 
 func (u *InitUsecase) RoleInitialize() error {
 	role := &model.Role{
@@ -173,16 +180,20 @@ func (u *InitUsecase) ApiInitialize() error {
 		{Name: "SystemRoleList", Path: "/api/system/role/list", Method: "GET", Description: "获取角色列表", Group: "role", Status: 1},
 		{Name: "SystemRoleCreate", Path: "/api/system/role", Method: "POST", Description: "创建角色", Group: "role", Status: 1},
 		{Name: "SystemRoleUpdate", Path: "/api/system/role", Method: "PUT", Description: "更新角色", Group: "role", Status: 1},
-		{Name: "SystemRoleDelete", Path: "/api/system/role/*", Method: "DELETE", Description: "删除角色", Group: "role", Status: 1},
+		{Name: "SystemRoleDelete", Path: "/api/system/role/:id", Method: "DELETE", Description: "删除角色", Group: "role", Status: 1},
+		{Name: "SystemRoleGetApiPermissions", Path: "/api/system/role/:id/api-permissions", Method: "GET", Description: "获取角色API权限", Group: "role", Status: 1},
+		{Name: "SystemRoleAssignApiPermissions", Path: "/api/system/role/assign-api-permissions", Method: "POST", Description: "分配角色API权限", Group: "role", Status: 1},
+		{Name: "SystemRoleGetMenuPermissions", Path: "/api/system/role/:id/menu-permissions", Method: "GET", Description: "获取角色菜单权限", Group: "role", Status: 1},
+		{Name: "SystemRoleAssignMenuPermissions", Path: "/api/system/role/assign-menu-permissions", Method: "POST", Description: "分配角色菜单权限", Group: "role", Status: 1},
 		{Name: "SystemMenuTree", Path: "/api/system/menu/tree", Method: "GET", Description: "获取菜单树", Group: "menu", Status: 1},
 		{Name: "SystemMenuList", Path: "/api/system/menu/list", Method: "GET", Description: "获取菜单列表", Group: "menu", Status: 1},
 		{Name: "SystemMenuCreate", Path: "/api/system/menu", Method: "POST", Description: "创建菜单", Group: "menu", Status: 1},
 		{Name: "SystemMenuUpdate", Path: "/api/system/menu", Method: "PUT", Description: "更新菜单", Group: "menu", Status: 1},
-		{Name: "SystemMenuDelete", Path: "/api/system/menu/*", Method: "DELETE", Description: "删除菜单", Group: "menu", Status: 1},
+		{Name: "SystemMenuDelete", Path: "/api/system/menu/:id", Method: "DELETE", Description: "删除菜单", Group: "menu", Status: 1},
 		{Name: "SystemApiList", Path: "/api/system/api/list", Method: "GET", Description: "获取API列表", Group: "api", Status: 1},
 		{Name: "SystemApiCreate", Path: "/api/system/api", Method: "POST", Description: "创建API", Group: "api", Status: 1},
 		{Name: "SystemApiUpdate", Path: "/api/system/api", Method: "PUT", Description: "更新API", Group: "api", Status: 1},
-		{Name: "SystemApiDelete", Path: "/api/system/api/*", Method: "DELETE", Description: "删除API", Group: "api", Status: 1},
+		{Name: "SystemApiDelete", Path: "/api/system/api/:id", Method: "DELETE", Description: "删除API", Group: "api", Status: 1},
 	}
 	if err := u.apiRepo.BatchCreate(context.Background(), apis); err != nil {
 		return err
@@ -199,16 +210,20 @@ func (u *InitUsecase) CasbinInitialize() error {
 		{model.RoleKeyAdmin, "/api/system/role/list", "GET"},
 		{model.RoleKeyAdmin, "/api/system/role", "POST"},
 		{model.RoleKeyAdmin, "/api/system/role", "PUT"},
-		{model.RoleKeyAdmin, "/api/system/role/*", "DELETE"},
+		{model.RoleKeyAdmin, "/api/system/role/:id", "DELETE"},
+		{model.RoleKeyAdmin, "/api/system/role/:id/api-permissions", "GET"},
+		{model.RoleKeyAdmin, "/api/system/role/assign-api-permissions", "POST"},
+		{model.RoleKeyAdmin, "/api/system/role/:id/menu-permissions", "GET"},
+		{model.RoleKeyAdmin, "/api/system/role/assign-menu-permissions", "POST"},
 		{model.RoleKeyAdmin, "/api/system/menu/tree", "GET"},
 		{model.RoleKeyAdmin, "/api/system/menu/list", "GET"},
 		{model.RoleKeyAdmin, "/api/system/menu", "POST"},
 		{model.RoleKeyAdmin, "/api/system/menu", "PUT"},
-		{model.RoleKeyAdmin, "/api/system/menu/*", "DELETE"},
+		{model.RoleKeyAdmin, "/api/system/menu/:id", "DELETE"},
 		{model.RoleKeyAdmin, "/api/system/api/list", "GET"},
 		{model.RoleKeyAdmin, "/api/system/api", "POST"},
 		{model.RoleKeyAdmin, "/api/system/api", "PUT"},
-		{model.RoleKeyAdmin, "/api/system/api/*", "DELETE"},
+		{model.RoleKeyAdmin, "/api/system/api/:id", "DELETE"},
 	}
 
 	for _, policy := range policies {
@@ -223,4 +238,14 @@ func (u *InitUsecase) CasbinInitialize() error {
 		return err
 	}
 	return u.initRepo.SetInitialized(model.InitNameCasbin, "v1.0.0", "初始化超级管理员权限")
+}
+
+// RoleMenuInitialize 初始化角色菜单关联
+func (u *InitUsecase) RoleMenuInitialize() error {
+	// 为超级管理员分配所有菜单（使用菜单ID）
+	menuIds := []uint64{1, 2, 3, 4, 5, 6, 7}
+	if err := u.roleMenuRepo.AssignMenus(context.Background(), 1, menuIds); err != nil {
+		return err
+	}
+	return u.initRepo.SetInitialized(model.InitNameRoleMenu, "v1.0.0", "初始化超级管理员菜单权限")
 }

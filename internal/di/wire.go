@@ -8,7 +8,8 @@ import (
 	"server/internal/core"
 	"server/internal/core/server"
 	"server/internal/middleware"
-	"server/internal/module/system/api"
+	imApi "server/internal/module/im/api"
+	systemApi "server/internal/module/system/api"
 	"server/internal/module/system/biz"
 	"server/internal/module/system/repo"
 	"server/internal/router"
@@ -21,7 +22,8 @@ func InitApp(path string) (*server.HTTPServer, error) {
 		core.ProviderSet,
 		router.ProviderSet,
 		middleware.ProviderSet,
-		api.ProviderSet,
+		systemApi.ProviderSet,
+		imApi.ProviderSet,
 		biz.ProviderSet,
 		repo.ProviderSet,
 	)

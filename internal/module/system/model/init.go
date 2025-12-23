@@ -24,6 +24,7 @@ const (
 	InitNameMenu       = "Menu"
 	InitNameCasbin     = "Casbin"
 	InitNameApi        = "Api"
+	InitNameRoleMenu   = "RoleMenu"
 )
 
 var InitCol = struct {

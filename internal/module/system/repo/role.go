@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"server/internal/core/mysql"
 	"server/internal/module/system/biz/repo"
 	"server/internal/module/system/model"
 	"server/internal/module/system/model/request"
@@ -13,8 +14,8 @@ type roleRepo struct {
 	db *gorm.DB
 }
 
-func NewRoleRepo(db *gorm.DB) repo.RoleRepo {
-	return &roleRepo{db: db}
+func NewRoleRepo(systemDB *mysql.SystemDB) repo.RoleRepo {
+	return &roleRepo{db: systemDB.DB}
 }
 
 func (r *roleRepo) Delete(ctx context.Context, id int64) error {
